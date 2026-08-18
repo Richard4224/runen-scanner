@@ -1,0 +1,1442 @@
+[
+ {
+  "file": "0000.raw",
+  "w": 1084,
+  "h": 312,
+  "font": "Phoenix-Runen",
+  "level": "sauber",
+  "size": 56,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0001.raw",
+  "w": 859,
+  "h": 244,
+  "font": "Phoenix-Runen",
+  "level": "leicht",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0002.raw",
+  "w": 859,
+  "h": 244,
+  "font": "Phoenix-Runen",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0003.raw",
+  "w": 859,
+  "h": 244,
+  "font": "Phoenix-Runen",
+  "level": "schlecht",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0004.raw",
+  "w": 1469,
+  "h": 400,
+  "font": "Phoenix-Runen",
+  "level": "sauber",
+  "size": 72,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0005.raw",
+  "w": 1469,
+  "h": 400,
+  "font": "Phoenix-Runen",
+  "level": "leicht",
+  "size": 72,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0006.raw",
+  "w": 1135,
+  "h": 312,
+  "font": "Phoenix-Runen",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0007.raw",
+  "w": 894,
+  "h": 244,
+  "font": "Phoenix-Runen",
+  "level": "schlecht",
+  "size": 44,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0008.raw",
+  "w": 600,
+  "h": 244,
+  "font": "Phoenix-Runen",
+  "level": "sauber",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0009.raw",
+  "w": 754,
+  "h": 312,
+  "font": "Phoenix-Runen",
+  "level": "leicht",
+  "size": 56,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0010.raw",
+  "w": 977,
+  "h": 400,
+  "font": "Phoenix-Runen",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0011.raw",
+  "w": 600,
+  "h": 244,
+  "font": "Phoenix-Runen",
+  "level": "schlecht",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0012.raw",
+  "w": 800,
+  "h": 312,
+  "font": "Phoenix-Runen",
+  "level": "sauber",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0013.raw",
+  "w": 635,
+  "h": 244,
+  "font": "Phoenix-Runen",
+  "level": "leicht",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0014.raw",
+  "w": 635,
+  "h": 244,
+  "font": "Phoenix-Runen",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0015.raw",
+  "w": 800,
+  "h": 312,
+  "font": "Phoenix-Runen",
+  "level": "schlecht",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0016.raw",
+  "w": 1041,
+  "h": 312,
+  "font": "Phoenix-Runen",
+  "level": "sauber",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0017.raw",
+  "w": 1350,
+  "h": 400,
+  "font": "Phoenix-Runen",
+  "level": "leicht",
+  "size": 72,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0018.raw",
+  "w": 824,
+  "h": 244,
+  "font": "Phoenix-Runen",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0019.raw",
+  "w": 1041,
+  "h": 312,
+  "font": "Phoenix-Runen",
+  "level": "schlecht",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0020.raw",
+  "w": 937,
+  "h": 312,
+  "font": "Phoenix-Taluz",
+  "level": "sauber",
+  "size": 56,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0021.raw",
+  "w": 1198,
+  "h": 400,
+  "font": "Phoenix-Taluz",
+  "level": "leicht",
+  "size": 72,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0022.raw",
+  "w": 1198,
+  "h": 400,
+  "font": "Phoenix-Taluz",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0023.raw",
+  "w": 732,
+  "h": 244,
+  "font": "Phoenix-Taluz",
+  "level": "schlecht",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0024.raw",
+  "w": 1342,
+  "h": 400,
+  "font": "Phoenix-Taluz",
+  "level": "sauber",
+  "size": 72,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0025.raw",
+  "w": 823,
+  "h": 244,
+  "font": "Phoenix-Taluz",
+  "level": "leicht",
+  "size": 44,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0026.raw",
+  "w": 1342,
+  "h": 400,
+  "font": "Phoenix-Taluz",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0027.raw",
+  "w": 1049,
+  "h": 312,
+  "font": "Phoenix-Taluz",
+  "level": "schlecht",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0028.raw",
+  "w": 852,
+  "h": 400,
+  "font": "Phoenix-Taluz",
+  "level": "sauber",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0029.raw",
+  "w": 666,
+  "h": 312,
+  "font": "Phoenix-Taluz",
+  "level": "leicht",
+  "size": 56,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0030.raw",
+  "w": 521,
+  "h": 244,
+  "font": "Phoenix-Taluz",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0031.raw",
+  "w": 852,
+  "h": 400,
+  "font": "Phoenix-Taluz",
+  "level": "schlecht",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0032.raw",
+  "w": 757,
+  "h": 312,
+  "font": "Phoenix-Taluz",
+  "level": "sauber",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0033.raw",
+  "w": 970,
+  "h": 400,
+  "font": "Phoenix-Taluz",
+  "level": "leicht",
+  "size": 72,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0034.raw",
+  "w": 593,
+  "h": 244,
+  "font": "Phoenix-Taluz",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0035.raw",
+  "w": 593,
+  "h": 244,
+  "font": "Phoenix-Taluz",
+  "level": "schlecht",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0036.raw",
+  "w": 1204,
+  "h": 400,
+  "font": "Phoenix-Taluz",
+  "level": "sauber",
+  "size": 72,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0037.raw",
+  "w": 736,
+  "h": 244,
+  "font": "Phoenix-Taluz",
+  "level": "leicht",
+  "size": 44,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0038.raw",
+  "w": 939,
+  "h": 312,
+  "font": "Phoenix-Taluz",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0039.raw",
+  "w": 1204,
+  "h": 400,
+  "font": "Phoenix-Taluz",
+  "level": "schlecht",
+  "size": 72,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0040.raw",
+  "w": 1146,
+  "h": 312,
+  "font": "Phoenix-Gobsch",
+  "level": "sauber",
+  "size": 56,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0041.raw",
+  "w": 1474,
+  "h": 400,
+  "font": "Phoenix-Gobsch",
+  "level": "leicht",
+  "size": 72,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0042.raw",
+  "w": 903,
+  "h": 244,
+  "font": "Phoenix-Gobsch",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0043.raw",
+  "w": 1474,
+  "h": 400,
+  "font": "Phoenix-Gobsch",
+  "level": "schlecht",
+  "size": 72,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0044.raw",
+  "w": 1269,
+  "h": 312,
+  "font": "Phoenix-Gobsch",
+  "level": "sauber",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0045.raw",
+  "w": 996,
+  "h": 244,
+  "font": "Phoenix-Gobsch",
+  "level": "leicht",
+  "size": 44,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0046.raw",
+  "w": 1269,
+  "h": 312,
+  "font": "Phoenix-Gobsch",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0047.raw",
+  "w": 996,
+  "h": 244,
+  "font": "Phoenix-Gobsch",
+  "level": "schlecht",
+  "size": 44,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0048.raw",
+  "w": 872,
+  "h": 312,
+  "font": "Phoenix-Gobsch",
+  "level": "sauber",
+  "size": 56,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0049.raw",
+  "w": 687,
+  "h": 244,
+  "font": "Phoenix-Gobsch",
+  "level": "leicht",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0050.raw",
+  "w": 1123,
+  "h": 400,
+  "font": "Phoenix-Gobsch",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0051.raw",
+  "w": 687,
+  "h": 244,
+  "font": "Phoenix-Gobsch",
+  "level": "schlecht",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0052.raw",
+  "w": 1214,
+  "h": 400,
+  "font": "Phoenix-Gobsch",
+  "level": "sauber",
+  "size": 72,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0053.raw",
+  "w": 944,
+  "h": 312,
+  "font": "Phoenix-Gobsch",
+  "level": "leicht",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0054.raw",
+  "w": 1214,
+  "h": 400,
+  "font": "Phoenix-Gobsch",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0055.raw",
+  "w": 944,
+  "h": 312,
+  "font": "Phoenix-Gobsch",
+  "level": "schlecht",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0056.raw",
+  "w": 1511,
+  "h": 400,
+  "font": "Phoenix-Gobsch",
+  "level": "sauber",
+  "size": 72,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0057.raw",
+  "w": 1176,
+  "h": 312,
+  "font": "Phoenix-Gobsch",
+  "level": "leicht",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0058.raw",
+  "w": 1176,
+  "h": 312,
+  "font": "Phoenix-Gobsch",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0059.raw",
+  "w": 1176,
+  "h": 312,
+  "font": "Phoenix-Gobsch",
+  "level": "schlecht",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0060.raw",
+  "w": 640,
+  "h": 312,
+  "font": "Phoenix-Lacrimat",
+  "level": "sauber",
+  "size": 56,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0061.raw",
+  "w": 640,
+  "h": 312,
+  "font": "Phoenix-Lacrimat",
+  "level": "leicht",
+  "size": 56,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0062.raw",
+  "w": 502,
+  "h": 244,
+  "font": "Phoenix-Lacrimat",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0063.raw",
+  "w": 502,
+  "h": 244,
+  "font": "Phoenix-Lacrimat",
+  "level": "schlecht",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0064.raw",
+  "w": 565,
+  "h": 244,
+  "font": "Phoenix-Lacrimat",
+  "level": "sauber",
+  "size": 44,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0065.raw",
+  "w": 565,
+  "h": 244,
+  "font": "Phoenix-Lacrimat",
+  "level": "leicht",
+  "size": 44,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0066.raw",
+  "w": 715,
+  "h": 312,
+  "font": "Phoenix-Lacrimat",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0067.raw",
+  "w": 565,
+  "h": 244,
+  "font": "Phoenix-Lacrimat",
+  "level": "schlecht",
+  "size": 44,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0068.raw",
+  "w": 424,
+  "h": 244,
+  "font": "Phoenix-Lacrimat",
+  "level": "sauber",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0069.raw",
+  "w": 690,
+  "h": 400,
+  "font": "Phoenix-Lacrimat",
+  "level": "leicht",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0070.raw",
+  "w": 690,
+  "h": 400,
+  "font": "Phoenix-Lacrimat",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0071.raw",
+  "w": 424,
+  "h": 244,
+  "font": "Phoenix-Lacrimat",
+  "level": "schlecht",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0072.raw",
+  "w": 561,
+  "h": 312,
+  "font": "Phoenix-Lacrimat",
+  "level": "sauber",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0073.raw",
+  "w": 442,
+  "h": 244,
+  "font": "Phoenix-Lacrimat",
+  "level": "leicht",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0074.raw",
+  "w": 721,
+  "h": 400,
+  "font": "Phoenix-Lacrimat",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0075.raw",
+  "w": 442,
+  "h": 244,
+  "font": "Phoenix-Lacrimat",
+  "level": "schlecht",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0076.raw",
+  "w": 544,
+  "h": 244,
+  "font": "Phoenix-Lacrimat",
+  "level": "sauber",
+  "size": 44,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0077.raw",
+  "w": 693,
+  "h": 312,
+  "font": "Phoenix-Lacrimat",
+  "level": "leicht",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0078.raw",
+  "w": 889,
+  "h": 400,
+  "font": "Phoenix-Lacrimat",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0079.raw",
+  "w": 693,
+  "h": 312,
+  "font": "Phoenix-Lacrimat",
+  "level": "schlecht",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0080.raw",
+  "w": 1497,
+  "h": 400,
+  "font": "Phoenix-Xersesch",
+  "level": "sauber",
+  "size": 72,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0081.raw",
+  "w": 1497,
+  "h": 400,
+  "font": "Phoenix-Xersesch",
+  "level": "leicht",
+  "size": 72,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0082.raw",
+  "w": 918,
+  "h": 244,
+  "font": "Phoenix-Xersesch",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0083.raw",
+  "w": 1169,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "schlecht",
+  "size": 56,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0084.raw",
+  "w": 1668,
+  "h": 400,
+  "font": "Phoenix-Xersesch",
+  "level": "sauber",
+  "size": 72,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0085.raw",
+  "w": 1302,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "leicht",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0086.raw",
+  "w": 1302,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0087.raw",
+  "w": 1024,
+  "h": 244,
+  "font": "Phoenix-Xersesch",
+  "level": "schlecht",
+  "size": 44,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0088.raw",
+  "w": 1102,
+  "h": 400,
+  "font": "Phoenix-Xersesch",
+  "level": "sauber",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0089.raw",
+  "w": 675,
+  "h": 244,
+  "font": "Phoenix-Xersesch",
+  "level": "leicht",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0090.raw",
+  "w": 858,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0091.raw",
+  "w": 858,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "schlecht",
+  "size": 56,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0092.raw",
+  "w": 961,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "sauber",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0093.raw",
+  "w": 961,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "leicht",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0094.raw",
+  "w": 758,
+  "h": 244,
+  "font": "Phoenix-Xersesch",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0095.raw",
+  "w": 961,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "schlecht",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0096.raw",
+  "w": 1143,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "sauber",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0097.raw",
+  "w": 1143,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "leicht",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0098.raw",
+  "w": 1143,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0099.raw",
+  "w": 1143,
+  "h": 312,
+  "font": "Phoenix-Xersesch",
+  "level": "schlecht",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0100.raw",
+  "w": 449,
+  "h": 244,
+  "font": "Phoenix-Nalya",
+  "level": "sauber",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0101.raw",
+  "w": 449,
+  "h": 244,
+  "font": "Phoenix-Nalya",
+  "level": "leicht",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0102.raw",
+  "w": 740,
+  "h": 400,
+  "font": "Phoenix-Nalya",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0103.raw",
+  "w": 449,
+  "h": 244,
+  "font": "Phoenix-Nalya",
+  "level": "schlecht",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0104.raw",
+  "w": 581,
+  "h": 312,
+  "font": "Phoenix-Nalya",
+  "level": "sauber",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0105.raw",
+  "w": 742,
+  "h": 400,
+  "font": "Phoenix-Nalya",
+  "level": "leicht",
+  "size": 72,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0106.raw",
+  "w": 448,
+  "h": 244,
+  "font": "Phoenix-Nalya",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0107.raw",
+  "w": 742,
+  "h": 400,
+  "font": "Phoenix-Nalya",
+  "level": "schlecht",
+  "size": 72,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0108.raw",
+  "w": 508,
+  "h": 312,
+  "font": "Phoenix-Nalya",
+  "level": "sauber",
+  "size": 56,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0109.raw",
+  "w": 394,
+  "h": 244,
+  "font": "Phoenix-Nalya",
+  "level": "leicht",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0110.raw",
+  "w": 648,
+  "h": 400,
+  "font": "Phoenix-Nalya",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0111.raw",
+  "w": 648,
+  "h": 400,
+  "font": "Phoenix-Nalya",
+  "level": "schlecht",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0112.raw",
+  "w": 420,
+  "h": 244,
+  "font": "Phoenix-Nalya",
+  "level": "sauber",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0113.raw",
+  "w": 544,
+  "h": 312,
+  "font": "Phoenix-Nalya",
+  "level": "leicht",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0114.raw",
+  "w": 544,
+  "h": 312,
+  "font": "Phoenix-Nalya",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0115.raw",
+  "w": 544,
+  "h": 312,
+  "font": "Phoenix-Nalya",
+  "level": "schlecht",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0116.raw",
+  "w": 457,
+  "h": 244,
+  "font": "Phoenix-Nalya",
+  "level": "sauber",
+  "size": 44,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0117.raw",
+  "w": 591,
+  "h": 312,
+  "font": "Phoenix-Nalya",
+  "level": "leicht",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0118.raw",
+  "w": 457,
+  "h": 244,
+  "font": "Phoenix-Nalya",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0119.raw",
+  "w": 591,
+  "h": 312,
+  "font": "Phoenix-Nalya",
+  "level": "schlecht",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0120.raw",
+  "w": 750,
+  "h": 312,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "sauber",
+  "size": 56,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0121.raw",
+  "w": 750,
+  "h": 312,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "leicht",
+  "size": 56,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0122.raw",
+  "w": 750,
+  "h": 312,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0123.raw",
+  "w": 960,
+  "h": 400,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "schlecht",
+  "size": 72,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0124.raw",
+  "w": 1016,
+  "h": 400,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "sauber",
+  "size": 72,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0125.raw",
+  "w": 615,
+  "h": 244,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "leicht",
+  "size": 44,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0126.raw",
+  "w": 792,
+  "h": 312,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0127.raw",
+  "w": 792,
+  "h": 312,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "schlecht",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0128.raw",
+  "w": 553,
+  "h": 312,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "sauber",
+  "size": 56,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0129.raw",
+  "w": 553,
+  "h": 312,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "leicht",
+  "size": 56,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0130.raw",
+  "w": 708,
+  "h": 400,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0131.raw",
+  "w": 429,
+  "h": 244,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "schlecht",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0132.raw",
+  "w": 776,
+  "h": 400,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "sauber",
+  "size": 72,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0133.raw",
+  "w": 776,
+  "h": 400,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "leicht",
+  "size": 72,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0134.raw",
+  "w": 470,
+  "h": 244,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "handyfoto",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0135.raw",
+  "w": 470,
+  "h": 244,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "schlecht",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0136.raw",
+  "w": 718,
+  "h": 312,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "sauber",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0137.raw",
+  "w": 917,
+  "h": 400,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "leicht",
+  "size": 72,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0138.raw",
+  "w": 917,
+  "h": 400,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0139.raw",
+  "w": 556,
+  "h": 244,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "schlecht",
+  "size": 44,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0140.raw",
+  "w": 1560,
+  "h": 400,
+  "font": "Phoenix-Lem-Kai",
+  "level": "sauber",
+  "size": 72,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0141.raw",
+  "w": 1213,
+  "h": 312,
+  "font": "Phoenix-Lem-Kai",
+  "level": "leicht",
+  "size": 56,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0142.raw",
+  "w": 1560,
+  "h": 400,
+  "font": "Phoenix-Lem-Kai",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0143.raw",
+  "w": 951,
+  "h": 244,
+  "font": "Phoenix-Lem-Kai",
+  "level": "schlecht",
+  "size": 44,
+  "text": "DER BOTE BRINGT NACHRICHT\nAUS DEM NORDEN"
+ },
+ {
+  "file": "0144.raw",
+  "w": 1753,
+  "h": 400,
+  "font": "Phoenix-Lem-Kai",
+  "level": "sauber",
+  "size": 72,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0145.raw",
+  "w": 1364,
+  "h": 312,
+  "font": "Phoenix-Lem-Kai",
+  "level": "leicht",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0146.raw",
+  "w": 1364,
+  "h": 312,
+  "font": "Phoenix-Lem-Kai",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0147.raw",
+  "w": 1753,
+  "h": 400,
+  "font": "Phoenix-Lem-Kai",
+  "level": "schlecht",
+  "size": 72,
+  "text": "TREFFEN BEI SONNENUNTERGANG\nAM ALTEN TURM"
+ },
+ {
+  "file": "0148.raw",
+  "w": 1064,
+  "h": 400,
+  "font": "Phoenix-Lem-Kai",
+  "level": "sauber",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0149.raw",
+  "w": 828,
+  "h": 312,
+  "font": "Phoenix-Lem-Kai",
+  "level": "leicht",
+  "size": 56,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0150.raw",
+  "w": 1064,
+  "h": 400,
+  "font": "Phoenix-Lem-Kai",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0151.raw",
+  "w": 650,
+  "h": 244,
+  "font": "Phoenix-Lem-Kai",
+  "level": "schlecht",
+  "size": 44,
+  "text": "HUETE DICH VOR DEM\nMANN MIT DER MASKE"
+ },
+ {
+  "file": "0152.raw",
+  "w": 1254,
+  "h": 400,
+  "font": "Phoenix-Lem-Kai",
+  "level": "sauber",
+  "size": 72,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0153.raw",
+  "w": 765,
+  "h": 244,
+  "font": "Phoenix-Lem-Kai",
+  "level": "leicht",
+  "size": 44,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0154.raw",
+  "w": 1254,
+  "h": 400,
+  "font": "Phoenix-Lem-Kai",
+  "level": "handyfoto",
+  "size": 72,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0155.raw",
+  "w": 976,
+  "h": 312,
+  "font": "Phoenix-Lem-Kai",
+  "level": "schlecht",
+  "size": 56,
+  "text": "DIE QUELLE VERSIEGT\nWENN DER MOND STEIGT"
+ },
+ {
+  "file": "0156.raw",
+  "w": 1150,
+  "h": 312,
+  "font": "Phoenix-Lem-Kai",
+  "level": "sauber",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0157.raw",
+  "w": 1150,
+  "h": 312,
+  "font": "Phoenix-Lem-Kai",
+  "level": "leicht",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0158.raw",
+  "w": 1150,
+  "h": 312,
+  "font": "Phoenix-Lem-Kai",
+  "level": "handyfoto",
+  "size": 56,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ },
+ {
+  "file": "0159.raw",
+  "w": 1476,
+  "h": 400,
+  "font": "Phoenix-Lem-Kai",
+  "level": "schlecht",
+  "size": 72,
+  "text": "BRINGE ZWOELF KRUEGE METH\nZUM LAGER DER WACHE"
+ }
+]

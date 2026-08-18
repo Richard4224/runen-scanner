@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<title>Runenübersetzer</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header><h1>◈ Runenübersetzer ◈</h1></header>
+
+<main>
+
+  <section id="screen-start" class="screen active">
+    <div class="sigil">◈</div>
+    <p>Halte das Gerät über einen Runenbrief, um ihn zu entschlüsseln.</p>
+    <button id="pick-btn" class="primary" type="button">Runenbrief erfassen</button>
+    <input id="file-input" type="file" accept="image/*" class="hidden" />
+  </section>
+
+  <section id="screen-crop" class="screen stack">
+    <div id="crop-wrap">
+      <canvas id="crop-canvas"></canvas>
+      <div id="crop-rect">
+        <div class="handle nw" data-h="nw"></div>
+        <div class="handle ne" data-h="ne"></div>
+        <div class="handle sw" data-h="sw"></div>
+        <div class="handle se" data-h="se"></div>
+      </div>
+    </div>
+    <p style="color:var(--dim); font-size:0.85rem; margin:0;">Rahmen auf den Runentext ziehen.</p>
+    <label class="field">
+      Sprache der Runen
+      <select id="font-select"></select>
+    </label>
+    <div class="row">
+      <button id="crop-cancel" class="ghost" type="button">Neues Bild</button>
+      <button id="crop-go" class="primary" type="button">Entschlüsseln</button>
+    </div>
+  </section>
+
+  <section id="screen-loading" class="screen">
+    <div class="rune-spin">◈</div>
+    <div id="loading-text">Die Runen werden befragt …</div>
+    <div id="loading-time"></div>
+    <button id="loading-cancel" class="ghost" type="button">Abbrechen</button>
+  </section>
+
+  <section id="screen-result" class="screen stack">
+    <div id="error-box" class="hidden"></div>
+    <div id="result-meta"></div>
+    <label id="dict-toggle-wrap" class="switch-row hidden">
+      <input id="dict-toggle" type="checkbox" checked />
+      <span>Wörterbuch: unsichere Wörter raten</span>
+    </label>
+    <div id="result-text"></div>
+    <div id="amb-legend"></div>
+    <div id="dict-legend"></div>
+    <div class="row">
+      <button id="result-again" class="ghost" type="button">Neues Bild</button>
+      <button id="result-retry" class="ghost" type="button">Andere Sprache</button>
+    </div>
+  </section>
+
+</main>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

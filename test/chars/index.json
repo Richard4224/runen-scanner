@@ -1,0 +1,1946 @@
+[
+ {
+  "file": "0000.raw",
+  "w": 132,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "A"
+ },
+ {
+  "file": "0001.raw",
+  "w": 148,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "B"
+ },
+ {
+  "file": "0002.raw",
+  "w": 142,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "C"
+ },
+ {
+  "file": "0003.raw",
+  "w": 133,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "D"
+ },
+ {
+  "file": "0004.raw",
+  "w": 133,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "E"
+ },
+ {
+  "file": "0005.raw",
+  "w": 150,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "F"
+ },
+ {
+  "file": "0006.raw",
+  "w": 139,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "G"
+ },
+ {
+  "file": "0007.raw",
+  "w": 149,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "H"
+ },
+ {
+  "file": "0008.raw",
+  "w": 145,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "I"
+ },
+ {
+  "file": "0009.raw",
+  "w": 154,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "J"
+ },
+ {
+  "file": "0010.raw",
+  "w": 139,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "K"
+ },
+ {
+  "file": "0011.raw",
+  "w": 141,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "L"
+ },
+ {
+  "file": "0012.raw",
+  "w": 137,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "M"
+ },
+ {
+  "file": "0013.raw",
+  "w": 139,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "N"
+ },
+ {
+  "file": "0014.raw",
+  "w": 150,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "O"
+ },
+ {
+  "file": "0015.raw",
+  "w": 147,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "P"
+ },
+ {
+  "file": "0016.raw",
+  "w": 151,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Q"
+ },
+ {
+  "file": "0017.raw",
+  "w": 150,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "R"
+ },
+ {
+  "file": "0018.raw",
+  "w": 134,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "S"
+ },
+ {
+  "file": "0019.raw",
+  "w": 145,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "T"
+ },
+ {
+  "file": "0020.raw",
+  "w": 137,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "U"
+ },
+ {
+  "file": "0021.raw",
+  "w": 152,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "V"
+ },
+ {
+  "file": "0022.raw",
+  "w": 135,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "W"
+ },
+ {
+  "file": "0023.raw",
+  "w": 145,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "X"
+ },
+ {
+  "file": "0024.raw",
+  "w": 151,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Y"
+ },
+ {
+  "file": "0025.raw",
+  "w": 150,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Z"
+ },
+ {
+  "file": "0026.raw",
+  "w": 1228,
+  "h": 206,
+  "font": "Phoenix-Runen",
+  "level": "alphabet",
+  "size": 56,
+  "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ },
+ {
+  "file": "0027.raw",
+  "w": 128,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "A"
+ },
+ {
+  "file": "0028.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "B"
+ },
+ {
+  "file": "0029.raw",
+  "w": 130,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "C"
+ },
+ {
+  "file": "0030.raw",
+  "w": 132,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "D"
+ },
+ {
+  "file": "0031.raw",
+  "w": 133,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "E"
+ },
+ {
+  "file": "0032.raw",
+  "w": 142,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "F"
+ },
+ {
+  "file": "0033.raw",
+  "w": 139,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "G"
+ },
+ {
+  "file": "0034.raw",
+  "w": 128,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "H"
+ },
+ {
+  "file": "0035.raw",
+  "w": 140,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "I"
+ },
+ {
+  "file": "0036.raw",
+  "w": 140,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "J"
+ },
+ {
+  "file": "0037.raw",
+  "w": 131,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "K"
+ },
+ {
+  "file": "0038.raw",
+  "w": 138,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "L"
+ },
+ {
+  "file": "0039.raw",
+  "w": 118,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "M"
+ },
+ {
+  "file": "0040.raw",
+  "w": 138,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "N"
+ },
+ {
+  "file": "0041.raw",
+  "w": 130,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "O"
+ },
+ {
+  "file": "0042.raw",
+  "w": 130,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "P"
+ },
+ {
+  "file": "0043.raw",
+  "w": 133,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Q"
+ },
+ {
+  "file": "0044.raw",
+  "w": 145,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "R"
+ },
+ {
+  "file": "0045.raw",
+  "w": 129,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "S"
+ },
+ {
+  "file": "0046.raw",
+  "w": 133,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "T"
+ },
+ {
+  "file": "0047.raw",
+  "w": 129,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "U"
+ },
+ {
+  "file": "0048.raw",
+  "w": 138,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "V"
+ },
+ {
+  "file": "0049.raw",
+  "w": 129,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "W"
+ },
+ {
+  "file": "0050.raw",
+  "w": 130,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "X"
+ },
+ {
+  "file": "0051.raw",
+  "w": 142,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Y"
+ },
+ {
+  "file": "0052.raw",
+  "w": 140,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Z"
+ },
+ {
+  "file": "0053.raw",
+  "w": 971,
+  "h": 206,
+  "font": "Phoenix-Taluz",
+  "level": "alphabet",
+  "size": 56,
+  "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ },
+ {
+  "file": "0054.raw",
+  "w": 143,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "A"
+ },
+ {
+  "file": "0055.raw",
+  "w": 148,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "B"
+ },
+ {
+  "file": "0056.raw",
+  "w": 149,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "C"
+ },
+ {
+  "file": "0057.raw",
+  "w": 148,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "D"
+ },
+ {
+  "file": "0058.raw",
+  "w": 152,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "E"
+ },
+ {
+  "file": "0059.raw",
+  "w": 154,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "F"
+ },
+ {
+  "file": "0060.raw",
+  "w": 144,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "G"
+ },
+ {
+  "file": "0061.raw",
+  "w": 145,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "H"
+ },
+ {
+  "file": "0062.raw",
+  "w": 144,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "I"
+ },
+ {
+  "file": "0063.raw",
+  "w": 150,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "J"
+ },
+ {
+  "file": "0064.raw",
+  "w": 150,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "K"
+ },
+ {
+  "file": "0065.raw",
+  "w": 133,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "L"
+ },
+ {
+  "file": "0066.raw",
+  "w": 147,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "M"
+ },
+ {
+  "file": "0067.raw",
+  "w": 142,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "N"
+ },
+ {
+  "file": "0068.raw",
+  "w": 139,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "O"
+ },
+ {
+  "file": "0069.raw",
+  "w": 149,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "P"
+ },
+ {
+  "file": "0070.raw",
+  "w": 145,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Q"
+ },
+ {
+  "file": "0071.raw",
+  "w": 130,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "R"
+ },
+ {
+  "file": "0072.raw",
+  "w": 137,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "S"
+ },
+ {
+  "file": "0073.raw",
+  "w": 146,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "T"
+ },
+ {
+  "file": "0074.raw",
+  "w": 142,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "U"
+ },
+ {
+  "file": "0075.raw",
+  "w": 149,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "V"
+ },
+ {
+  "file": "0076.raw",
+  "w": 149,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "W"
+ },
+ {
+  "file": "0077.raw",
+  "w": 144,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "X"
+ },
+ {
+  "file": "0078.raw",
+  "w": 154,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Y"
+ },
+ {
+  "file": "0079.raw",
+  "w": 145,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Z"
+ },
+ {
+  "file": "0080.raw",
+  "w": 1278,
+  "h": 206,
+  "font": "Phoenix-Gobsch",
+  "level": "alphabet",
+  "size": 56,
+  "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ },
+ {
+  "file": "0081.raw",
+  "w": 114,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "A"
+ },
+ {
+  "file": "0082.raw",
+  "w": 117,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "B"
+ },
+ {
+  "file": "0083.raw",
+  "w": 118,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "C"
+ },
+ {
+  "file": "0084.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "D"
+ },
+ {
+  "file": "0085.raw",
+  "w": 120,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "E"
+ },
+ {
+  "file": "0086.raw",
+  "w": 122,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "F"
+ },
+ {
+  "file": "0087.raw",
+  "w": 118,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "G"
+ },
+ {
+  "file": "0088.raw",
+  "w": 121,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "H"
+ },
+ {
+  "file": "0089.raw",
+  "w": 123,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "I"
+ },
+ {
+  "file": "0090.raw",
+  "w": 134,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "J"
+ },
+ {
+  "file": "0091.raw",
+  "w": 135,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "K"
+ },
+ {
+  "file": "0092.raw",
+  "w": 137,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "L"
+ },
+ {
+  "file": "0093.raw",
+  "w": 137,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "M"
+ },
+ {
+  "file": "0094.raw",
+  "w": 127,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "N"
+ },
+ {
+  "file": "0095.raw",
+  "w": 128,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "O"
+ },
+ {
+  "file": "0096.raw",
+  "w": 128,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "P"
+ },
+ {
+  "file": "0097.raw",
+  "w": 131,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Q"
+ },
+ {
+  "file": "0098.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "R"
+ },
+ {
+  "file": "0099.raw",
+  "w": 123,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "S"
+ },
+ {
+  "file": "0100.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "T"
+ },
+ {
+  "file": "0101.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "U"
+ },
+ {
+  "file": "0102.raw",
+  "w": 129,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "V"
+ },
+ {
+  "file": "0103.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "W"
+ },
+ {
+  "file": "0104.raw",
+  "w": 131,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "X"
+ },
+ {
+  "file": "0105.raw",
+  "w": 125,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Y"
+ },
+ {
+  "file": "0106.raw",
+  "w": 123,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Z"
+ },
+ {
+  "file": "0107.raw",
+  "w": 760,
+  "h": 206,
+  "font": "Phoenix-Lacrimat",
+  "level": "alphabet",
+  "size": 56,
+  "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ },
+ {
+  "file": "0108.raw",
+  "w": 145,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "A"
+ },
+ {
+  "file": "0109.raw",
+  "w": 143,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "B"
+ },
+ {
+  "file": "0110.raw",
+  "w": 138,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "C"
+ },
+ {
+  "file": "0111.raw",
+  "w": 148,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "D"
+ },
+ {
+  "file": "0112.raw",
+  "w": 144,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "E"
+ },
+ {
+  "file": "0113.raw",
+  "w": 145,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "F"
+ },
+ {
+  "file": "0114.raw",
+  "w": 144,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "G"
+ },
+ {
+  "file": "0115.raw",
+  "w": 146,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "H"
+ },
+ {
+  "file": "0116.raw",
+  "w": 152,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "I"
+ },
+ {
+  "file": "0117.raw",
+  "w": 146,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "J"
+ },
+ {
+  "file": "0118.raw",
+  "w": 139,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "K"
+ },
+ {
+  "file": "0119.raw",
+  "w": 145,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "L"
+ },
+ {
+  "file": "0120.raw",
+  "w": 143,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "M"
+ },
+ {
+  "file": "0121.raw",
+  "w": 152,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "N"
+ },
+ {
+  "file": "0122.raw",
+  "w": 149,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "O"
+ },
+ {
+  "file": "0123.raw",
+  "w": 143,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "P"
+ },
+ {
+  "file": "0124.raw",
+  "w": 139,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Q"
+ },
+ {
+  "file": "0125.raw",
+  "w": 140,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "R"
+ },
+ {
+  "file": "0126.raw",
+  "w": 141,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "S"
+ },
+ {
+  "file": "0127.raw",
+  "w": 143,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "T"
+ },
+ {
+  "file": "0128.raw",
+  "w": 140,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "U"
+ },
+ {
+  "file": "0129.raw",
+  "w": 141,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "V"
+ },
+ {
+  "file": "0130.raw",
+  "w": 138,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "W"
+ },
+ {
+  "file": "0131.raw",
+  "w": 137,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "X"
+ },
+ {
+  "file": "0132.raw",
+  "w": 136,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Y"
+ },
+ {
+  "file": "0133.raw",
+  "w": 136,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Z"
+ },
+ {
+  "file": "0134.raw",
+  "w": 1213,
+  "h": 206,
+  "font": "Phoenix-Xersesch",
+  "level": "alphabet",
+  "size": 56,
+  "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ },
+ {
+  "file": "0135.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "A"
+ },
+ {
+  "file": "0136.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "B"
+ },
+ {
+  "file": "0137.raw",
+  "w": 104,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "C"
+ },
+ {
+  "file": "0138.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "D"
+ },
+ {
+  "file": "0139.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "E"
+ },
+ {
+  "file": "0140.raw",
+  "w": 104,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "F"
+ },
+ {
+  "file": "0141.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "G"
+ },
+ {
+  "file": "0142.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "H"
+ },
+ {
+  "file": "0143.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "I"
+ },
+ {
+  "file": "0144.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "J"
+ },
+ {
+  "file": "0145.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "K"
+ },
+ {
+  "file": "0146.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "L"
+ },
+ {
+  "file": "0147.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "M"
+ },
+ {
+  "file": "0148.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "N"
+ },
+ {
+  "file": "0149.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "O"
+ },
+ {
+  "file": "0150.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "P"
+ },
+ {
+  "file": "0151.raw",
+  "w": 104,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Q"
+ },
+ {
+  "file": "0152.raw",
+  "w": 104,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "R"
+ },
+ {
+  "file": "0153.raw",
+  "w": 121,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "S"
+ },
+ {
+  "file": "0154.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "T"
+ },
+ {
+  "file": "0155.raw",
+  "w": 104,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "U"
+ },
+ {
+  "file": "0156.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "V"
+ },
+ {
+  "file": "0157.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "W"
+ },
+ {
+  "file": "0158.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "X"
+ },
+ {
+  "file": "0159.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Y"
+ },
+ {
+  "file": "0160.raw",
+  "w": 115,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Z"
+ },
+ {
+  "file": "0161.raw",
+  "w": 540,
+  "h": 206,
+  "font": "Phoenix-Nalya",
+  "level": "alphabet",
+  "size": 56,
+  "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ },
+ {
+  "file": "0162.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "A"
+ },
+ {
+  "file": "0163.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "B"
+ },
+ {
+  "file": "0164.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "C"
+ },
+ {
+  "file": "0165.raw",
+  "w": 118,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "D"
+ },
+ {
+  "file": "0166.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "E"
+ },
+ {
+  "file": "0167.raw",
+  "w": 113,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "F"
+ },
+ {
+  "file": "0168.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "G"
+ },
+ {
+  "file": "0169.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "H"
+ },
+ {
+  "file": "0170.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "I"
+ },
+ {
+  "file": "0171.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "J"
+ },
+ {
+  "file": "0172.raw",
+  "w": 117,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "K"
+ },
+ {
+  "file": "0173.raw",
+  "w": 127,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "L"
+ },
+ {
+  "file": "0174.raw",
+  "w": 116,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "M"
+ },
+ {
+  "file": "0175.raw",
+  "w": 127,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "N"
+ },
+ {
+  "file": "0176.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "O"
+ },
+ {
+  "file": "0177.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "P"
+ },
+ {
+  "file": "0178.raw",
+  "w": 127,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Q"
+ },
+ {
+  "file": "0179.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "R"
+ },
+ {
+  "file": "0180.raw",
+  "w": 127,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "S"
+ },
+ {
+  "file": "0181.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "T"
+ },
+ {
+  "file": "0182.raw",
+  "w": 131,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "U"
+ },
+ {
+  "file": "0183.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "V"
+ },
+ {
+  "file": "0184.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "W"
+ },
+ {
+  "file": "0185.raw",
+  "w": 128,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "X"
+ },
+ {
+  "file": "0186.raw",
+  "w": 126,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Y"
+ },
+ {
+  "file": "0187.raw",
+  "w": 113,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Z"
+ },
+ {
+  "file": "0188.raw",
+  "w": 734,
+  "h": 206,
+  "font": "Phoenix-Nalya-Shirin",
+  "level": "alphabet",
+  "size": 56,
+  "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ },
+ {
+  "file": "0189.raw",
+  "w": 137,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "A"
+ },
+ {
+  "file": "0190.raw",
+  "w": 155,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "B"
+ },
+ {
+  "file": "0191.raw",
+  "w": 152,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "C"
+ },
+ {
+  "file": "0192.raw",
+  "w": 142,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "D"
+ },
+ {
+  "file": "0193.raw",
+  "w": 146,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "E"
+ },
+ {
+  "file": "0194.raw",
+  "w": 142,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "F"
+ },
+ {
+  "file": "0195.raw",
+  "w": 141,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "G"
+ },
+ {
+  "file": "0196.raw",
+  "w": 141,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "H"
+ },
+ {
+  "file": "0197.raw",
+  "w": 139,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "I"
+ },
+ {
+  "file": "0198.raw",
+  "w": 141,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "J"
+ },
+ {
+  "file": "0199.raw",
+  "w": 142,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "K"
+ },
+ {
+  "file": "0200.raw",
+  "w": 144,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "L"
+ },
+ {
+  "file": "0201.raw",
+  "w": 124,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "M"
+ },
+ {
+  "file": "0202.raw",
+  "w": 155,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "N"
+ },
+ {
+  "file": "0203.raw",
+  "w": 142,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "O"
+ },
+ {
+  "file": "0204.raw",
+  "w": 149,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "P"
+ },
+ {
+  "file": "0205.raw",
+  "w": 143,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Q"
+ },
+ {
+  "file": "0206.raw",
+  "w": 148,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "R"
+ },
+ {
+  "file": "0207.raw",
+  "w": 176,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "S"
+ },
+ {
+  "file": "0208.raw",
+  "w": 149,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "T"
+ },
+ {
+  "file": "0209.raw",
+  "w": 139,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "U"
+ },
+ {
+  "file": "0210.raw",
+  "w": 136,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "V"
+ },
+ {
+  "file": "0211.raw",
+  "w": 137,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "W"
+ },
+ {
+  "file": "0212.raw",
+  "w": 153,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "X"
+ },
+ {
+  "file": "0213.raw",
+  "w": 151,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Y"
+ },
+ {
+  "file": "0214.raw",
+  "w": 149,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "isoliert",
+  "size": 56,
+  "text": "Z"
+ },
+ {
+  "file": "0215.raw",
+  "w": 1273,
+  "h": 206,
+  "font": "Phoenix-Lem-Kai",
+  "level": "alphabet",
+  "size": 56,
+  "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ }
+]

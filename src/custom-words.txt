@@ -1,0 +1,25 @@
+# Eigene Wörter fürs Wörterbuch: Charakternamen, Orte, Fraktionen, Begriffe
+# aus eurem LARP, die in keinem normalen deutschen Wörterbuch stehen.
+# Bundeslaender, Staedte und normales Deutsch kommen aus dem bereinigten
+# Woerterbuch -- die muessen hier nicht stehen.
+#
+# Ein Wort/Name pro Zeile. Umlaute sind ok (ä/ö/ü/ß), Groß-/Kleinschreibung
+# ist egal. Zeilen mit # werden ignoriert. Nach dem Ändern einmal
+# "npm run build" laufen lassen, damit die dist/index.html aktualisiert wird.
+#
+# Beispiele:
+# Elyndra
+# Schwarzmoor
+# Nachtklinge
+
+Bote
+Norden
+Sonnenuntergang
+Maske
+Quelle
+Mond
+Kruege
+Meth
+Lager
+Brief
+Hallo

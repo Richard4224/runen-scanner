@@ -1,0 +1,19 @@
+{
+  "name": "runen-scanner",
+  "version": "0.1.0",
+  "description": "Uebersetzt fotografierte Runenbriefe der Phoenix-Sprachen zurueck in Klartext",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node test/run.js",
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "an-array-of-german-words": "^1.2.0",
+    "dictionary-de": "^3.0.0",
+    "esbuild": "^0.28.2",
+    "jpeg-js": "^0.4.4",
+    "nspell": "^2.1.5",
+    "playwright": "^1.62.1"
+  }
+}

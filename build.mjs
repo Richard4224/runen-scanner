@@ -1,0 +1,179 @@
+// Baut aus src/ eine einzige, eigenstaendige dist/index.html: Schriftdaten,
+// Worker-Code und UI-Code sind inline eingebettet. Kein fetch(), kein
+// <script type=module>, kein separater Worker-Datei-URL -- all das ist unter
+// file:// in Safari unzuverlaessig oder verboten. Ergebnis: eine Datei, die
+// man per AirDrop aufs Handy legt und in Safari oeffnet, ganz ohne Internet
+// oder Server.
+
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import * as esbuild from "esbuild";
+import dictionaryDe from "dictionary-de";
+import nspell from "nspell";
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const src = path.join(here, "src");
+const dist = path.join(here, "dist");
+fs.mkdirSync(dist, { recursive: true });
+
+// 1. Atlas-Daten als JS-Modul bereitstellen (kein JSON-fetch noetig).
+const atlasRaw = fs.readFileSync(path.join(src, "atlas.json"), "utf8");
+fs.writeFileSync(
+  path.join(src, "generated-atlas.js"),
+  `// Automatisch erzeugt von build.mjs -- nicht von Hand bearbeiten.\nexport const ATLAS_JSON = ${atlasRaw};\n`,
+);
+
+// 1b. Woerterbuch: Haeufigkeitsliste, aber nur Woerter die Hunspell (igerman98)
+// als echtes Deutsch kennt -- sonst landen Crawl-Muellwoerter wie TASI vor
+// TAXI. Zusaetzlich alle Hunspell-Staemme (Taxi, Sachsen, Muenchen, ...) und
+// die Bindestrich-Bundeslaender, die als ein Token nicht im Dic stehen.
+// Die Rune-Fonts kennen keine Umlaute/ß -- Abgleich immer A-Z (ae/oe/ue/ss).
+const translit = (w) =>
+  w.toUpperCase()
+    .replace(/Ä/g, "AE").replace(/Ö/g, "OE").replace(/Ü/g, "UE")
+    .replace(/ß/gi, "SS")
+    .replace(/[^A-Z]/g, "");
+
+const spell = nspell({
+  aff: Buffer.from(dictionaryDe.aff),
+  dic: Buffer.from(dictionaryDe.dic),
+});
+
+function isGerman(w) {
+  if (!w) return false;
+  if (spell.correct(w)) return true;
+  const lower = w.toLowerCase();
+  if (spell.correct(lower)) return true;
+  const cap = lower.charAt(0).toUpperCase() + lower.slice(1);
+  return spell.correct(cap);
+}
+
+const require = (await import("node:module")).createRequire(import.meta.url);
+const germanWords = require("an-array-of-german-words");
+
+const customLines = fs.readFileSync(path.join(src, "custom-words.txt"), "utf8")
+  .split("\n")
+  .map((l) => l.trim())
+  .filter((l) => l && !l.startsWith("#"));
+
+const dicText = new TextDecoder("utf8").decode(dictionaryDe.dic);
+const lowerStems = new Set();
+const capStems = new Set();
+for (const line of dicText.split(/\r?\n/)) {
+  if (!line || line.startsWith("\t") || line.startsWith("#")) continue;
+  if (/^\d+$/.test(line.trim())) continue;
+  const [raw0, flags = ""] = line.split("/");
+  const raw = (raw0 || "").trim();
+  if (!/^[A-Za-zÄÖÜäöüß]+$/.test(raw)) continue;
+  // ozm/hke: reine Gross-/Kleinschreib-Varianten, keine eigenen Woerter.
+  if (flags.includes("ozm") || flags.includes("hke")) continue;
+  const t = translit(raw);
+  if (t.length < 2) continue;
+  if (/^[a-zäöü]/.test(raw)) lowerStems.add(t);
+  else if (/^[A-ZÄÖÜ]/.test(raw)) capStems.add(t);
+}
+
+function isNounKey(t) {
+  return capStems.has(t) && !lowerStems.has(t);
+}
+
+const words = [];
+const nounFlags = [];
+const seen = new Set();
+function addWord(t, noun) {
+  if (t.length < 2 || seen.has(t)) return;
+  seen.add(t);
+  words.push(t);
+  nounFlags.push(!!noun);
+}
+
+for (const w of germanWords) {
+  const t = translit(w);
+  if (t.length < 2 || seen.has(t) || !isGerman(w)) continue;
+  addWord(t, isNounKey(t));
+}
+
+for (const line of dicText.split(/\r?\n/)) {
+  if (!line || line.startsWith("\t") || line.startsWith("#")) continue;
+  if (/^\d+$/.test(line.trim())) continue;
+  const raw = line.split("/")[0].trim();
+  if (raw.length <= 3 && raw === raw.toUpperCase() && !isGerman(raw.toLowerCase())) continue;
+  const t = translit(raw);
+  addWord(t, isNounKey(t));
+}
+
+for (const w of [
+  "Baden-Württemberg",
+  "Mecklenburg-Vorpommern",
+  "Nordrhein-Westfalen",
+  "Rheinland-Pfalz",
+  "Sachsen-Anhalt",
+  "Schleswig-Holstein",
+]) {
+  addWord(translit(w), true);
+}
+
+for (const w of customLines) {
+  const t = translit(w);
+  if (t.length < 2) continue;
+  const noun = isNounKey(t) || /^[A-ZÄÖÜ]/.test(w);
+  if (seen.has(t)) {
+    const i = words.indexOf(t);
+    if (i >= 0) nounFlags[i] = nounFlags[i] || noun;
+  } else {
+    addWord(t, noun);
+  }
+}
+
+const bytes = Buffer.alloc(Math.ceil(nounFlags.length / 8));
+for (let i = 0; i < nounFlags.length; i++) {
+  if (nounFlags[i]) bytes[i >> 3] |= 1 << (i & 7);
+}
+
+const customSet = new Set(customLines.map(translit).filter((t) => t.length >= 2));
+fs.writeFileSync(
+  path.join(src, "generated-dict.js"),
+  `// Automatisch erzeugt von build.mjs -- nicht von Hand bearbeiten.\n` +
+  `export const DICT_WORDS = ${JSON.stringify(words.join(" "))};\n` +
+  `export const DICT_NOUN_BITS = ${JSON.stringify(bytes.toString("base64"))};\n` +
+  `export const CUSTOM_WORDS = ${JSON.stringify([...customSet].join(" "))};\n`,
+);
+console.log(`Woerterbuch: ${words.length} Woerter (davon ${customLines.length} eigene, ${nounFlags.filter(Boolean).length} Nomen)`);
+
+// 2. Worker- und App-Code je zu einem IIFE buendeln (keine ES-Module zur
+//    Laufzeit -- vermeidet CORS-Stolperfallen bei file://).
+async function bundle(entry) {
+  const res = await esbuild.build({
+    entryPoints: [path.join(src, entry)],
+    bundle: true,
+    format: "iife",
+    platform: "browser",
+    target: "safari15",
+    write: false,
+    logLevel: "silent",
+  });
+  return res.outputFiles[0].text;
+}
+
+const workerCode = await bundle("worker.js");
+const appCode = await bundle("app.js");
+
+// 3. Alles in die HTML-Vorlage einbetten.
+const css = fs.readFileSync(path.join(src, "style.css"), "utf8");
+let html = fs.readFileSync(path.join(src, "index.html"), "utf8");
+
+html = html.replace(
+  '<link rel="stylesheet" href="style.css" />',
+  `<style>\n${css}\n</style>`,
+);
+html = html.replace(
+  '<script type="module" src="app.js"></script>',
+  `<script>\nglobalThis.__WORKER_SRC__ = ${JSON.stringify(workerCode)};\n</script>\n<script>\n${appCode}\n</script>`,
+);
+
+const outPath = path.join(dist, "index.html");
+fs.writeFileSync(outPath, html);
+
+const kb = (fs.statSync(outPath).size / 1024).toFixed(0);
+console.log(`dist/index.html geschrieben (${kb} KB)`);

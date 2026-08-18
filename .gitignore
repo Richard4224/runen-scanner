@@ -1,0 +1,12 @@
+node_modules/
+.venv/
+.claude/
+build/
+__pycache__/
+*.pyc
+.env
+.env.*
+.DS_Store
+Thumbs.db
+test/chars_stdout.txt
+test/chars_report.txt
