@@ -1,5 +1,5 @@
 import { DICT_WORDS, CUSTOM_WORDS, DICT_NOUN_BITS } from "../src/generated-dict.js";
-import { buildDict, correctWord, recaseText } from "../src/core/dict.js";
+import { buildDict, correctWord, correctTokens, recaseText } from "../src/core/dict.js";
 
 const dict = buildDict(DICT_WORDS, CUSTOM_WORDS, DICT_NOUN_BITS);
 const cases = [
@@ -27,6 +27,8 @@ const cases = [
   ["HAT", null],
   ["QUER", null],
   ["NIE", null],
+  ["NICHQ", "NICHT"],
+  ["BEDEUQUNG", "BEDEUTUNG"],
 ];
 const words = new Set(DICT_WORDS.split(" "));
 if (words.has("TASI")) {
@@ -43,6 +45,17 @@ for (const [src, want] of cases) {
   const ok = got === want;
   if (!ok) fail++;
   console.log(`${ok ? "ok" : "FAIL"}  ${src} → ${got === null ? "∅" : got}  (soll ${want === null ? "∅" : want})`);
+}
+{
+  const got = correctTokens(["E", "XEMPLA", "RE"], dict).join(" ");
+  const want = "EXEMPLAR";
+  const ok = got === want;
+  if (!ok) fail++;
+  console.log(`${ok ? "ok" : "FAIL"}  tokens E+XEMPLA+RE → ${got}  (soll ${want})`);
+}
+{
+  const got = correctTokens(["EINIG", "E", "Q", "EILE"], dict).join(" ");
+  console.log(`info  tokens EINIG+E+Q+EILE → ${got}`);
 }
 const recaseCases = [
   ["DAS IST EIN TEST", "Das ist ein Test"],

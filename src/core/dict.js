@@ -68,10 +68,11 @@ function levenshtein(a, b) {
   for (let i = 1; i <= m; i++) {
     const cur = [i];
     for (let j = 1; j <= n; j++) {
+      const sub = a[i - 1] === b[j - 1] ? 0 : subCost(a[i - 1], b[j - 1]);
       cur[j] = Math.min(
         prev[j] + 1,
         cur[j - 1] + 1,
-        prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1),
+        prev[j - 1] + sub,
       );
     }
     prev = cur;
@@ -86,10 +87,16 @@ function posMatches(a, b) {
   return k;
 }
 
-// Nur diese Buchstabenpaare sind in den Phoenix-Fonts wirklich leicht zu
-// verwechseln. In-Dict-Woerter (QUER, NIE) werden nur dann ersetzt, wenn der
-// Unterschied so ein Paar ist -- sonst wuerde QUER zu FUER, NIE zu DIE.
-const CONFUSIONS = new Set(["EU", "UE", "BH", "HB", "TQ", "QT"]);
+// Optisch aehnliche Runen (Taluz Q=T, L=V; Runen E≈U, …). Substitution
+// kostet weniger als ein wilder Tippfehler -- Ranking bevorzugt Verwechslungen.
+const CONFUSIONS = new Set([
+  "EU", "UE", "BH", "HB", "TQ", "QT", "LV", "VL", "WV", "VW", "BW", "WB",
+]);
+
+function subCost(a, b) {
+  if (a === b) return 0;
+  return CONFUSIONS.has(a + b) ? 0.35 : 1;
+}
 
 function isConfusionSwap(a, b) {
   if (a.length !== b.length) return false;
@@ -139,10 +146,12 @@ function guessSingle(word, dict) {
   }
   if (!best || bestDist > maxD) return null;
   if (bestPos < Math.ceil(word.length / 3)) return null;
+  // Zweistellige Tokens nur bei optischer Verwechslung (US→ES), nie RE→DE.
+  if (word.length <= 2 && bestDist >= 0.99 && !isConfusionSwap(word, best) && !bestCustom) return null;
   // Echtes Dict-Wort nur ersetzen, wenn genau ein verwechselbarer Buchstabe
   // anders ist und das Ziel viel haeufiger (BAT→HAT, nicht QUER→FUER).
-  if (dict.dictSet.has(word) && bestDist >= 1 && !bestCustom) {
-    if (!bestSame || bestDist !== 1 || !isConfusionSwap(word, best)) return null;
+  if (dict.dictSet.has(word) && bestDist >= 1e-9 && !bestCustom) {
+    if (!bestSame || bestDist > 0.5 || !isConfusionSwap(word, best)) return null;
     if (bestRank > 100) return null;
     if (bestRank > selfRank / 20) return null;
   }
@@ -186,4 +195,73 @@ export function correctWord(word, dict) {
   const split = inDict ? null : guessSplit(word, dict);
   if (split && (!single || split.dist < single.dist)) return split.text;
   return single ? single.text : null;
+}
+
+/**
+ * Korrigiert eine Tokenfolge und klebt kurze Bruchstuecke wieder zusammen
+ * (Taluz: "E XEMPLA RE" → "EXEMPLAR"), bevor geraten wird.
+ */
+export function correctTokens(tokens, dict) {
+  const out = [];
+  let i = 0;
+  while (i < tokens.length) {
+    const alone = tokens[i];
+    let aloneText = alone;
+    let aloneDist = 40;
+    if (dict.customSet.has(alone) || dict.dictSet.has(alone)) {
+      aloneText = alone;
+      aloneDist = 0;
+    } else {
+      const g = correctWord(alone, dict);
+      if (g) {
+        aloneText = g;
+        aloneDist = levenshtein(alone, g.replace(/ /g, ""));
+      }
+    }
+    let best = { n: 1, text: aloneText, score: aloneDist };
+
+    for (let n = 2; n <= Math.min(5, tokens.length - i); n++) {
+      const parts = tokens.slice(i, i + n);
+      if (parts.some((p) => p.length > 8)) break;
+      // Mindestens ein Bruchstueck: sehr kurz, oder mittelkurz und unbekannt.
+      const hasFrag = parts.some((p) =>
+        p.length <= 2
+        || (p.length <= 4 && !dict.dictSet.has(p) && !dict.customSet.has(p)));
+      if (!hasFrag) continue;
+      const partsOk = parts.every((p) => {
+        if (p.length < 2) return false;
+        if (dict.dictSet.has(p) || dict.customSet.has(p)) return true;
+        const g = correctWord(p, dict);
+        return g && !g.includes(" ") && (dict.rank.get(g) ?? 99999) < 5000;
+      });
+      if (partsOk) continue;
+      const joined = parts.join("");
+      if (joined.length < 5 || joined.length > 14) continue;
+
+      let text = null;
+      let dist = Infinity;
+      if (dict.customSet.has(joined) || dict.dictSet.has(joined)) {
+        text = joined;
+        dist = 0;
+      } else {
+        const g = correctWord(joined, dict);
+        if (!g) continue;
+        dist = levenshtein(joined, g.replace(/ /g, ""));
+        // Zusammenkleben: max. ~1 echter Fehler (oder ein paar Verwechslungen).
+        if (dist > 1.2) continue;
+        const head = g.split(" ")[0];
+        const rank = dict.rank.get(head) ?? 99999;
+        if (rank > 35000 && !dict.customSet.has(head)) continue;
+        // Einzelbuchstaben nur in laengere Treffer kleben, sonst E+ES+I+N→LESEN.
+        if (parts.some((p) => p.length === 1) && joined.length < 7 && rank > 3000) continue;
+        text = g;
+      }
+      const score = dist - 0.3 * (n - 1);
+      if (score < best.score - 0.15) best = { n, text, score };
+    }
+
+    for (const w of best.text.split(" ")) if (w) out.push(w);
+    i += best.n;
+  }
+  return out;
 }

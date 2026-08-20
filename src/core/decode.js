@@ -188,8 +188,12 @@ export function decodeLine(line, glyphs, alphabet, opts = {}) {
     insertion = 0.45,
     jitter = 1,
     jitterCost = 0.02,
-    minGap = 0.14,
-    gapBonus = 0.08,
+    // Mindest-Wortluecke in em (nicht avgAdv): Buchstabenabstand ist ~0.05–0.08 em,
+    // Phoenix-Runen-Wortzwischenraum ~0.19 em. Schwelle darunter → Spaces mitten im Wort
+    // (Taluz), deutlich darueber → echte Spaces verschluckt.
+    minGapEm = 0.16,
+    gapBonus = 0.05,
+    em = null,
     vslack = 2,
   } = opts;
   const W = line.w;
@@ -216,7 +220,8 @@ export function decodeLine(line, glyphs, alphabet, opts = {}) {
   }
 
   const avgAdv = letters.reduce((s, c) => s + glyphs[c].adv, 0) / letters.length;
-  const gapWidth = Math.max(2, Math.round(avgAdv * minGap));
+  const emPx = em || avgAdv;
+  const gapWidth = Math.max(3, Math.round(emPx * minGapEm));
 
   for (let p = 0; p <= W; p++) {
     if (best[p] === -Infinity) continue;
@@ -240,9 +245,8 @@ export function decodeLine(line, glyphs, alphabet, opts = {}) {
       }
     }
 
-    // Wortzwischenraum: fast tintenfreie Strecke. Phoenix-Runen hat nur
-    // ~0,19 em Wortabstand -- die alte Schwelle 0,28 em hat Leerzeichen
-    // verschluckt. Ein Pixel Ueberhang darf die Luecke nicht killen.
+    // Wortzwischenraum: fast tintenfreie Strecke, mindestens minGapEm.
+    // Ein Pixel Ueberhang darf die Luecke nicht killen.
     for (let g = gapWidth; p + g <= W; g++) {
       if (!mostlyEmpty(p, p + g)) break;
       const np = p + g;

@@ -5,7 +5,7 @@
 // alles in einer einzigen HTML-Datei funktioniert).
 
 import { DICT_WORDS, CUSTOM_WORDS, DICT_NOUN_BITS } from "./generated-dict.js";
-import { buildDict, correctWord as guessWord, formatWord } from "./core/dict.js";
+import { buildDict, correctWord as guessWord, correctTokens, formatWord } from "./core/dict.js";
 
 const FONTS = [
   "Phoenix-Runen",
@@ -35,7 +35,6 @@ function showScreen(name) {
 }
 
 const fileInput = $("file-input");
-const pickBtn = $("pick-btn");
 const cropCanvas = $("crop-canvas");
 const cropWrap = $("crop-wrap");
 const cropRectEl = $("crop-rect");
@@ -56,23 +55,46 @@ let sourceImg = null;    // HTMLImageElement, EXIF-korrigiert
 let dispScale = 1;       // Canvas-CSS-Px -> Bild-Px
 let rect = { x: 0, y: 0, w: 0, h: 0 }; // in Canvas-CSS-Px
 
-pickBtn.addEventListener("click", () => fileInput.click());
+if (/WhatsApp|FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent || "")) {
+  $("safari-hint").classList.remove("hidden");
+}
+
 fileInput.addEventListener("change", onFilePicked);
+
+function showStartError(msg) {
+  const el = $("start-error");
+  el.textContent = msg;
+  el.classList.toggle("hidden", !msg);
+}
 
 function onFilePicked() {
   const file = fileInput.files && fileInput.files[0];
   fileInput.value = "";
   if (!file) return;
-  const url = URL.createObjectURL(file);
-  const img = new Image();
-  img.onload = () => {
+  showStartError("");
+  loadImageFile(file).then((img) => {
+    if (!img.naturalWidth || !img.naturalHeight) {
+      showStartError("Das Bild konnte nicht gelesen werden. In Safari öffnen und ein Foto aus der Mediathek wählen.");
+      return;
+    }
     sourceImg = img;
-    URL.revokeObjectURL(url);
     layoutCrop();
     showScreen("crop");
-  };
-  img.onerror = () => URL.revokeObjectURL(url);
-  img.src = url;
+  }).catch(() => {
+    showStartError("iPhone konnte das Bild nicht öffnen. Datei in Safari oder „Dateien“ öffnen, nicht in WhatsApp.");
+  });
+}
+
+function loadImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("image"));
+    const reader = new FileReader();
+    reader.onload = () => { img.src = reader.result; };
+    reader.onerror = () => reject(new Error("read"));
+    reader.readAsDataURL(file);
+  });
 }
 
 function layoutCrop() {
@@ -105,6 +127,9 @@ function renderRect() {
 }
 
 window.addEventListener("resize", () => { if (sourceImg) layoutCrop(); });
+window.addEventListener("pageshow", () => {
+  if (sourceImg && $("screen-crop").classList.contains("active")) layoutCrop();
+});
 
 // -- Rahmen ziehen/skalieren --
 const MIN_RECT = 24;
@@ -279,28 +304,41 @@ function renderRaw(container, chars) {
 function renderDict(container, chars) {
   const changed = new Map();
   let sentence = true;
-  for (const tok of tokenize(chars)) {
-    if (tok.type === "sep") {
-      if (tok.ch === "\n") sentence = true;
-      container.appendChild(tok.ch === "\n" ? document.createElement("br") : document.createTextNode(" "));
-      continue;
+  let lineWords = [];
+  let lineSeps = []; // parallel: after each word, what sep follows (space/newline/end)
+
+  const flushLine = () => {
+    if (!lineWords.length) return;
+    const raw = lineWords.map((t) => t.chars.map((c) => c.ch).join(""));
+    const fixed = correctTokens(raw, dict);
+    if (fixed.join(" ") !== raw.join(" ")) {
+      changed.set(raw.join(" "), fixed.join(" "));
     }
-    const word = tok.chars.map((c) => c.ch).join("");
-    const fix = correctWord(word);
-    if (fix && fix !== word) {
+    for (let i = 0; i < fixed.length; i++) {
+      if (i) container.appendChild(document.createTextNode(" "));
+      const w = fixed[i];
       const span = document.createElement("span");
-      span.className = "corrected";
-      span.textContent = fix.split(" ").map((w, i) => formatWord(w, dict, i === 0 && sentence)).join(" ");
+      if (fixed.join(" ") !== raw.join(" ")) span.className = "corrected";
+      span.textContent = formatWord(w, dict, i === 0 && sentence);
       container.appendChild(span);
-      changed.set(word, fix);
-    } else if (word.length === 1) {
-      appendChars(container, tok.chars);
-    } else {
-      const noun = dict.nouns.has(word);
-      appendChars(container, recaseChars(tok.chars, sentence, noun));
     }
     sentence = false;
+    lineWords = [];
+  };
+
+  for (const tok of tokenize(chars)) {
+    if (tok.type === "word") {
+      lineWords.push(tok);
+      continue;
+    }
+    if (tok.ch === "\n") {
+      flushLine();
+      container.appendChild(document.createElement("br"));
+      sentence = true;
+    }
+    // Spaces between words on the same line are re-emitted by flushLine.
   }
+  flushLine();
   return changed;
 }
 

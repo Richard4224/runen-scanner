@@ -42,7 +42,7 @@ export function readPage(img, atlas, fontName, opts = {}) {
     const tryCand = (cand) => {
       const glyphs = glyphsAt(cand.em);
       const res = decodeLine({ ...img2, baseline: cand.baseline }, glyphs,
-                             atlas.alphabet, opts.decode);
+                             atlas.alphabet, { ...opts.decode, em: cand.em });
       const expected = img2.w / Math.max(cand.em * avgAdvEm, 1);
       const extra = Math.max(0, (res.glyphCount || 0) - expected * 1.3);
       return { ...res, ...cand, adj: res.score - 0.02 * extra };
