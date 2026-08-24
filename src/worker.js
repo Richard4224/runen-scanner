@@ -5,7 +5,7 @@ import { prepareAtlas, ambiguityMap } from "./core/atlas.js";
 import { readPageCrnn } from "./core/crnn.js";
 import { readPage, readPageAutoFont } from "./core/pipeline.js";
 import { ATLAS_JSON } from "./generated-atlas.js";
-import { CRNN_MODELS_BASE64, ORT_WASM_BASE64 } from "./generated-crnn.js";
+import { CRNN_MODEL_FILES, CRNN_MODELS_BASE64, ORT_WASM_BASE64 } from "./generated-crnn.js";
 import * as ort from "onnxruntime-web/wasm";
 
 const atlas = prepareAtlas(ATLAS_JSON);
@@ -28,15 +28,17 @@ function decodeBase64(value) {
 function getCrnnSession(font, assetBase) {
   let promise = crnnSessions.get(font);
   if (!promise) {
-    if (!CRNN_MODELS_BASE64[font]) {
+    if (!CRNN_MODEL_FILES[font]) {
       throw new Error(`Kein Schnellmodell für ${font} eingebettet.`);
     }
     if (!ortConfigured) {
       const cores = self.navigator?.hardwareConcurrency || 2;
       ort.env.wasm.simd = true;
       ort.env.wasm.proxy = false;
-      if (self.crossOriginIsolated && assetBase) {
-        ort.env.wasm.numThreads = Math.min(4, Math.max(2, cores));
+      if (assetBase && (self.crossOriginIsolated || !ORT_WASM_BASE64)) {
+        ort.env.wasm.numThreads = self.crossOriginIsolated
+          ? Math.min(4, Math.max(2, cores))
+          : 1;
         ort.env.wasm.wasmPaths = {
           wasm: new URL("ort-wasm-simd-threaded.wasm", assetBase).href,
           mjs: new URL("ort-wasm-simd-threaded.mjs", assetBase).href,
@@ -47,11 +49,19 @@ function getCrnnSession(font, assetBase) {
       }
       ortConfigured = true;
     }
-    const model = decodeBase64(CRNN_MODELS_BASE64[font]);
-    promise = ort.InferenceSession.create(model, {
-      executionProviders: ["wasm"],
-      graphOptimizationLevel: "all",
-    });
+    const embedded = CRNN_MODELS_BASE64[font];
+    const modelPromise = embedded
+      ? Promise.resolve(decodeBase64(embedded))
+      : fetch(new URL(CRNN_MODEL_FILES[font], assetBase))
+        .then((response) => {
+          if (!response.ok) throw new Error(`Modell konnte nicht geladen werden (${response.status}).`);
+          return response.arrayBuffer();
+        })
+        .then((buffer) => new Uint8Array(buffer));
+    promise = modelPromise.then((model) => ort.InferenceSession.create(model, {
+        executionProviders: ["wasm"],
+        graphOptimizationLevel: "all",
+      }));
     crnnSessions.set(font, promise);
   }
   return promise;

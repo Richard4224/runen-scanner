@@ -13,3 +13,4 @@ test/chars_report.txt
 ml/checkpoints/
 src/generated-crnn.js
 .wrangler/
+dist-cloudflare/

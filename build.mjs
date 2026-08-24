@@ -15,7 +15,9 @@ import nspell from "nspell";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const src = path.join(here, "src");
 const dist = path.join(here, "dist");
+const distCloudflare = path.join(here, "dist-cloudflare");
 fs.mkdirSync(dist, { recursive: true });
+fs.mkdirSync(distCloudflare, { recursive: true });
 
 // 1. Atlas-Daten als JS-Modul bereitstellen (kein JSON-fetch noetig).
 const atlasRaw = fs.readFileSync(path.join(src, "atlas.json"), "utf8");
@@ -71,12 +73,16 @@ for (const [font, file] of Object.entries(crnnModelFiles)) {
 const ortWasmPath = require.resolve("onnxruntime-web/ort-wasm-simd-threaded.wasm");
 const ortMjsPath = require.resolve("onnxruntime-web/ort-wasm-simd-threaded.mjs");
 const ortWasm = fs.readFileSync(ortWasmPath);
-fs.writeFileSync(
-  path.join(src, "generated-crnn.js"),
-  `// Automatisch erzeugt von build.mjs -- nicht von Hand bearbeiten.\n` +
-  `export const CRNN_MODELS_BASE64 = ${JSON.stringify(crnnModels)};\n` +
-  `export const ORT_WASM_BASE64 = ${JSON.stringify(ortWasm.toString("base64"))};\n`,
-);
+function writeCrnnModule(models, wasm) {
+  fs.writeFileSync(
+    path.join(src, "generated-crnn.js"),
+    `// Automatisch erzeugt von build.mjs -- nicht von Hand bearbeiten.\n` +
+    `export const CRNN_MODEL_FILES = ${JSON.stringify(crnnModelFiles)};\n` +
+    `export const CRNN_MODELS_BASE64 = ${JSON.stringify(models)};\n` +
+    `export const ORT_WASM_BASE64 = ${JSON.stringify(wasm)};\n`,
+  );
+}
+writeCrnnModule(crnnModels, ortWasm.toString("base64"));
 
 const customLines = fs.readFileSync(path.join(src, "custom-words.txt"), "utf8")
   .split("\n")
@@ -183,26 +189,41 @@ async function bundle(entry) {
 }
 
 const workerCode = await bundle("worker.js");
+writeCrnnModule({}, "");
+const cloudflareWorkerCode = await bundle("worker.js");
+writeCrnnModule(crnnModels, ortWasm.toString("base64"));
 const appCode = await bundle("app.js");
 
-// 3. Alles in die HTML-Vorlage einbetten.
+// 3. Offline-Einzeldatei und schlanken Cloudflare-Build erzeugen.
 const css = fs.readFileSync(path.join(src, "style.css"), "utf8");
-let html = fs.readFileSync(path.join(src, "index.html"), "utf8");
-
-html = html.replace(
-  '<link rel="stylesheet" href="style.css" />',
-  `<style>\n${css}\n</style>`,
-);
-html = html.replace(
-  '<script type="module" src="app.js"></script>',
-  `<script>\nglobalThis.__WORKER_SRC__ = ${JSON.stringify(workerCode)};\n</script>\n<script>\n${appCode}\n</script>`,
-);
+function renderHtml(worker) {
+  let html = fs.readFileSync(path.join(src, "index.html"), "utf8");
+  html = html.replace(
+    '<link rel="stylesheet" href="style.css" />',
+    `<style>\n${css}\n</style>`,
+  );
+  return html.replace(
+    '<script type="module" src="app.js"></script>',
+    `<script>\nglobalThis.__WORKER_SRC__ = ${JSON.stringify(worker)};\n</script>\n<script>\n${appCode}\n</script>`,
+  );
+}
 
 const outPath = path.join(dist, "index.html");
-fs.writeFileSync(outPath, html);
+fs.writeFileSync(outPath, renderHtml(workerCode));
 fs.copyFileSync(path.join(src, "_headers"), path.join(dist, "_headers"));
 fs.copyFileSync(ortWasmPath, path.join(dist, "ort-wasm-simd-threaded.wasm"));
 fs.copyFileSync(ortMjsPath, path.join(dist, "ort-wasm-simd-threaded.mjs"));
 
+const cloudflarePath = path.join(distCloudflare, "index.html");
+fs.writeFileSync(cloudflarePath, renderHtml(cloudflareWorkerCode));
+fs.copyFileSync(path.join(src, "_headers"), path.join(distCloudflare, "_headers"));
+fs.copyFileSync(ortWasmPath, path.join(distCloudflare, "ort-wasm-simd-threaded.wasm"));
+fs.copyFileSync(ortMjsPath, path.join(distCloudflare, "ort-wasm-simd-threaded.mjs"));
+for (const file of Object.values(crnnModelFiles)) {
+  fs.copyFileSync(path.join(here, "models", file), path.join(distCloudflare, file));
+}
+
 const kb = (fs.statSync(outPath).size / 1024).toFixed(0);
-console.log(`dist/index.html geschrieben (${kb} KB)`);
+const cloudflareKb = (fs.statSync(cloudflarePath).size / 1024).toFixed(0);
+console.log(`dist/index.html geschrieben (${kb} KB, offline)`);
+console.log(`dist-cloudflare/index.html geschrieben (${cloudflareKb} KB, externe Modelle)`);

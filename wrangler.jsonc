@@ -2,5 +2,5 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "runen-uebersetzer",
   "compatibility_date": "2026-08-24",
-  "pages_build_output_dir": "./dist"
+  "pages_build_output_dir": "./dist-cloudflare"
 }
