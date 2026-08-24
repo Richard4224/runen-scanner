@@ -7,8 +7,10 @@
   "scripts": {
     "test": "node test/run.js",
     "build": "node build.mjs",
+    "deploy:cloudflare": "npm run build && wrangler pages deploy dist --project-name runen-uebersetzer",
     "ml:train:taluz": ".venv/Scripts/python ml/train_crnn.py --font Phoenix-Taluz",
-    "ml:bench:taluz": "node scripts/bench_crnn.mjs img/real/Taluz-15pt-B2.jpg models/taluz-crnn.onnx"
+    "ml:bench:taluz": "node scripts/bench_crnn.mjs img/real/Taluz-15pt-B2.jpg models/taluz-crnn.onnx",
+    "ml:bench:all": "node scripts/bench_crnn_set.mjs 4"
   },
   "devDependencies": {
     "an-array-of-german-words": "^1.2.0",
@@ -19,6 +21,7 @@
     "nspell": "^2.1.5",
     "onnxruntime-node": "^1.27.0",
     "onnxruntime-web": "^1.29.0",
-    "playwright": "^1.62.1"
+    "playwright": "^1.62.1",
+    "wrangler": "^4.125.0"
   }
 }

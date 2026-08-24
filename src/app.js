@@ -57,11 +57,11 @@ autoOpt.textContent = "Automatisch (langsamer)";
 fontSelect.appendChild(autoOpt);
 
 function crnnSelected() {
-  return fontSelect.value === "Phoenix-Taluz" && crnnToggle.checked;
+  return FONTS.includes(fontSelect.value) && crnnToggle.checked;
 }
 
 function updateEngineChoice() {
-  const available = fontSelect.value === "Phoenix-Taluz";
+  const available = FONTS.includes(fontSelect.value);
   crnnWrap.classList.toggle("hidden", !available);
   crnnHint.classList.toggle("hidden", !available || !crnnToggle.checked);
 }
@@ -262,7 +262,15 @@ function startDecode() {
 
   showScreen("loading");
   startLoadingAnim({ dw, dh, eta, auto, font: auto ? null : chosen, engine });
-  runWorker({ w: dw, h: dh, data: g.buffer, font: auto ? null : chosen, auto, engine }, g.buffer);
+  runWorker({
+    w: dw,
+    h: dh,
+    data: g.buffer,
+    font: auto ? null : chosen,
+    auto,
+    engine,
+    assetBase: location.href,
+  }, g.buffer);
 }
 
 let loadingTimer = null, elapsedTimer = null, startedAt = 0, watchdogTimer = null;

@@ -54,13 +54,27 @@ const germanWords = require("an-array-of-german-words");
 
 // 1c. Experimentelles Taluz-CRNN samt WASM-Laufzeit inline einbetten.
 // Dadurch bleibt auch der schnelle Modus eine einzige offline-faehige HTML.
-const crnnModel = fs.readFileSync(path.join(here, "models", "taluz-crnn.onnx"));
+const crnnModelFiles = {
+  "Phoenix-Runen": "runen-crnn.onnx",
+  "Phoenix-Taluz": "taluz-crnn.onnx",
+  "Phoenix-Gobsch": "gobsch-crnn.onnx",
+  "Phoenix-Lacrimat": "lacrimat-crnn.onnx",
+  "Phoenix-Xersesch": "xersesch-crnn.onnx",
+  "Phoenix-Nalya": "nalya-crnn.onnx",
+  "Phoenix-Nalya-Shirin": "nalya-shirin-crnn.onnx",
+  "Phoenix-Lem-Kai": "lem-kai-crnn.onnx",
+};
+const crnnModels = {};
+for (const [font, file] of Object.entries(crnnModelFiles)) {
+  crnnModels[font] = fs.readFileSync(path.join(here, "models", file)).toString("base64");
+}
 const ortWasmPath = require.resolve("onnxruntime-web/ort-wasm-simd-threaded.wasm");
+const ortMjsPath = require.resolve("onnxruntime-web/ort-wasm-simd-threaded.mjs");
 const ortWasm = fs.readFileSync(ortWasmPath);
 fs.writeFileSync(
   path.join(src, "generated-crnn.js"),
   `// Automatisch erzeugt von build.mjs -- nicht von Hand bearbeiten.\n` +
-  `export const TALUZ_MODEL_BASE64 = ${JSON.stringify(crnnModel.toString("base64"))};\n` +
+  `export const CRNN_MODELS_BASE64 = ${JSON.stringify(crnnModels)};\n` +
   `export const ORT_WASM_BASE64 = ${JSON.stringify(ortWasm.toString("base64"))};\n`,
 );
 
@@ -186,6 +200,9 @@ html = html.replace(
 
 const outPath = path.join(dist, "index.html");
 fs.writeFileSync(outPath, html);
+fs.copyFileSync(path.join(src, "_headers"), path.join(dist, "_headers"));
+fs.copyFileSync(ortWasmPath, path.join(dist, "ort-wasm-simd-threaded.wasm"));
+fs.copyFileSync(ortMjsPath, path.join(dist, "ort-wasm-simd-threaded.mjs"));
 
 const kb = (fs.statSync(outPath).size / 1024).toFixed(0);
 console.log(`dist/index.html geschrieben (${kb} KB)`);

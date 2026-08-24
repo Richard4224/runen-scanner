@@ -481,6 +481,7 @@ def parse_args():
     p.add_argument("--batch-size", type=int, default=16)
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--resume", action="store_true")
+    p.add_argument("--init-checkpoint", type=Path)
     p.add_argument("--clean-epochs", type=int, default=2)
     p.add_argument("--seed", type=int, default=17)
     p.add_argument("--threads", type=int, default=min(12, os.cpu_count() or 4))
@@ -536,6 +537,9 @@ def main():
     if args.resume and args.checkpoint.exists():
         model.load_state_dict(torch.load(args.checkpoint, map_location=device))
         print(f"Checkpoint fortgesetzt: {args.checkpoint}")
+    elif args.init_checkpoint and args.init_checkpoint.exists():
+        model.load_state_dict(torch.load(args.init_checkpoint, map_location=device))
+        print(f"Startgewichte geladen: {args.init_checkpoint}")
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=args.epochs

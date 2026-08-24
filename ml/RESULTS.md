@@ -1,20 +1,20 @@
-# Taluz-CRNN-Spike – Ergebnis
+# Phoenix-CRNN – Ergebnis
 
 Stand: 24. August 2026. Gemessen auf einem Intel Core i5-12600K, Node 24 und
-ONNX Runtime CPU. Das Modell wurde nur aus dem Phoenix-Taluz-TTF synthetisch
-trainiert; die echten Fotos waren nicht im Training.
+ONNX Runtime CPU. Alle acht Modelle wurden nur aus den jeweiligen Phoenix-TTFs
+synthetisch trainiert; die echten Fotos waren nicht im Training.
 
 ## Modell
 
 - Architektur: kleine CNN + bidirektionale GRU + CTC
 - Parameter: 268.844
-- ONNX-Größe: 1,03 MB
+- ONNX-Größe: je 1,03 MB
 - Eingabe: binäre Zeile, 48 Pixel hoch, dynamische Breite
 - Ausgabe: A-Z und Leerzeichen
 - Synthetische Validierungs-CER nach Absatz-Finetuning: 1,79 %
 
-Taluz hat optisch identische Zeichen (`Q=T`, `V=L`). Im Training werden diese
-auf `T` und `L` kanonisiert. Die endgültige Wahl muss später ein Sprachmodell
+Optisch identische Zeichen werden im Training kanonisiert: Taluz `Q=T`, `V=L`,
+Lem-Kai `P=Z` und Nalya `J=N`. Die endgültige Wahl muss später ein Sprachmodell
 oder Wörterbuch treffen.
 
 ## Echte Fotos
@@ -38,11 +38,30 @@ EXIF-korrigierten Foto 13,9 s Decode-Zeit und erreicht 94,9 % CER.
 - rohe CER: 33,6 %
 - bereinigte CER: 33,3 %
 
+### Alle Schriften
+
+Die Werte nennen jeweils B2/A1 und sind um physisch identische Runen bereinigt:
+
+- Runen: 46,3 % / 96,9 %
+- Taluz: 38,8 % / 33,3 %
+- Gobsch: 3,2 % / 38,0 %
+- Lacrimat: 41,7 % / 65,3 %
+- Xersesch: 74,2 % / 70,9 %
+- Nalya: 40,9 % / 64,2 %
+- Nalya-Shirin: 45,2 % / 26,6 %
+- Lem-Kai: 3,3 % / 47,2 %
+
+Über alle 16 Fotos liegt die mittlere bereinigte CER bei rund 46 %. Die
+automatische Metrik enthält auch Titel-/Randfragmente und misslungene
+Zeilenteilungen. Der praktische Taluz-Test war deshalb deutlich lesbarer, als
+seine globale CER vermuten ließ. Gobsch und Lem-Kai erreichen auf B2 bereits
+etwa 3 %.
+
 ## Urteil
 
-Der Spike erfüllt Größe und Geschwindigkeit deutlich, aber noch nicht das
-Ziel von unter 10 % CER auf echten Fotos. Tiny-CRNN+CTC ist damit als
-Laufzeit-Architektur plausibel, aber noch nicht bereit für die Website.
+Die Modelle erfüllen Größe und Geschwindigkeit deutlich. Die Genauigkeit
+schwankt je nach Schrift und Aufnahme stark; der Modus bleibt deshalb als
+experimentell gekennzeichnet und der klassische Decoder als Rückfall erhalten.
 
 Der Generator rendert inzwischen vollständige Absätze, binarisiert sie als
 Ganzes und schneidet danach dieselben periodischen Zeilenbänder wie der
@@ -55,14 +74,18 @@ decken diese realen Ausschnitte trotz Absatz-Finetuning noch nicht genau genug
 ab. Ein Wörterbuchlauf senkte B2 in diesem Zustand nicht und war wesentlich
 langsamer als die Inferenz.
 
-## Experimenteller Browsermodus
+## Browser- und Cloudflare-Modus
 
-Das Modell ist als ausdrücklich experimenteller Taluz-Schalter in die statische
-Website integriert. ONNX Runtime Web, WASM und Modell liegen vollständig in
-`dist/index.html`; der Modus bleibt daher offline nutzbar. Das macht die Datei
-etwa 21 MB groß. Ein End-to-End-Test in Chromium benötigte beim ersten Lauf
-0,8 s und beim zweiten Lauf mit wiederverwendetem Worker 0,6 s. Die Laufzeit
-auf iPhone/Safari muss Benedikt noch real messen.
+Alle acht Modelle sind über denselben experimentellen Schnellschalter in die
+statische Website integriert. ONNX Runtime Web, WASM und Modelle liegen
+vollständig in `dist/index.html`; das macht die Datei etwa 31 MB groß und
+erhält den Ein-Thread-Offline-Fallback.
+
+Cloudflare Pages liefert zusätzlich COOP/COEP-Header und reale WASM/MJS-Assets.
+Damit sind `crossOriginIsolated`, `SharedArrayBuffer` und bis zu vier
+WASM-Threads verfügbar. Der End-to-End-Test des Gobsch-B2-Fotos im isolierten
+Cloudflare-Modus erkannte 29 Zeilen in 2,2 s einschließlich erstem Laden und
+Kompilieren. Auf GitHub Pages bleibt der eingebettete Ein-Thread-Fallback.
 
 Sinnvoller nächster Genauigkeitsschritt ist echtes Domain-Adaptation-Training
 mit getrenntem Trainings-/Validierungsfoto oder ein CTC-Beam mit Sprachmodell.

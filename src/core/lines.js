@@ -165,7 +165,9 @@ function estimateLinePitch(prof) {
   if (prof.length < 30) return 0;
   const diff = new Float64Array(prof.length);
   for (let y = 1; y < prof.length; y++) diff[y] = prof[y] - prof[y - 1];
-  const lo = 6, hi = Math.min(80, Math.floor(prof.length / 3));
+  // Unter 9 px entstehen bei 1100px-Briefen eher Glyphen-Innenmuster als
+  // echte Druckzeilen; diese Peaks fuehren sonst zu massiver Ueberteilung.
+  const lo = 9, hi = Math.min(80, Math.floor(prof.length / 3));
   const scores = new Float64Array(hi + 1);
   for (let lag = lo; lag <= hi; lag++) {
     let s = 0, n = 0;
@@ -182,6 +184,18 @@ function estimateLinePitch(prof) {
         && scores[lag] > bestScore) {
       best = lag;
       bestScore = scores[lag];
+    }
+  }
+  // Autokorrelation zeigt auch Vielfache des echten Zeilenabstands. Wenn
+  // deren Peak minimal hoeher ist, wuerden sonst ganze Absaetze nur halbiert.
+  // Daher den kleinsten starken Peak als Grundperiode nehmen.
+  if (bestScore > 0) {
+    for (let lag = lo + 1; lag < best; lag++) {
+      if (scores[lag] >= scores[lag - 1]
+          && scores[lag] >= scores[lag + 1]
+          && scores[lag] >= bestScore * 0.5) {
+        return lag;
+      }
     }
   }
   return best;
