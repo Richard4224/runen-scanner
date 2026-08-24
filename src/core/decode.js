@@ -246,12 +246,20 @@ export function decodeLine(line, glyphs, alphabet, opts = {}) {
     }
 
     // Wortzwischenraum: fast tintenfreie Strecke, mindestens minGapEm.
-    // Ein Pixel Ueberhang darf die Luecke nicht killen.
-    for (let g = gapWidth; p + g <= W; g++) {
-      if (!mostlyEmpty(p, p + g)) break;
-      const np = p + g;
-      const v = best[p] + gapBonus;
-      if (v > best[np]) { best[np] = v; from[np] = p; via[np] = " "; }
+    // Nur am Ende der Luecke andocken (plus wenig Slack) -- frueher jedes
+    // Pixel zu befuellen hat das DP auf Taluz/iPhone praktisch eingefroren.
+    {
+      const g0 = gapWidth;
+      if (p + g0 <= W && mostlyEmpty(p, p + g0)) {
+        let gMax = g0;
+        while (p + gMax + 1 <= W && mostlyEmpty(p, p + gMax + 1)) gMax++;
+        const slack = Math.min(2, Math.max(0, gMax - g0));
+        for (let g = gMax - slack; g <= gMax; g++) {
+          const np = p + g;
+          const v = best[p] + gapBonus;
+          if (v > best[np]) { best[np] = v; from[np] = p; via[np] = " "; }
+        }
+      }
     }
   }
 

@@ -16,33 +16,133 @@ export function fontExtent(font, emPx) {
 }
 
 /**
- * Zerlegt das Binaerbild in Zeilen. Ueber das Zeilenprofil: zusammenhaengende
- * Baender mit Tinte sind Zeilen, die Taeler dazwischen die Zeilenabstaende.
+ * Zerlegt das Binaerbild in Zeilen.
+ *
+ * Saubere Scans: Tinte-Baender mit fast leeren Taelern (klassischer Schwellwert).
+ * Handyfotos: zwischen den Zeilen bleibt oft 20–40 % Rest-Tinte (Schatten,
+ * JPEG, Papierstruktur) — dann greift die Tal-Suche ueber das geglaettete
+ * Profil, sonst verschmelzen alle Zeilen zu einer Mega-Zeile.
  */
-export function findLines(bin, { minInk = 0.02, minHeight = 8 } = {}) {
+export function findLines(bin, opts = {}) {
+  const { minInk = 0.02, minHeight = 8 } = opts;
+  const prof = rowProfile(bin);
+  let peak = 0;
+  for (const v of prof) peak = Math.max(peak, v);
+  if (!peak) return [];
+
+  const classic = bandsAbove(prof, Math.max(1, peak * minInk), minHeight)
+    .map((l) => withBounds(bin, l));
+  const maxH = classic.reduce((m, l) => Math.max(m, l.y1 - l.y0), 0);
+  // Eine Zeile, die mehr als ~18 % der Seite einnimmt, ist auf einem Brief
+  // unrealistisch — typisches Zeichen, dass der Schwellwert die Luecken nicht sieht.
+  if (classic.length >= 1 && maxH <= bin.h * 0.18) return classic;
+
+  return findLinesByValleys(bin, prof, peak, opts);
+}
+
+function rowProfile(bin) {
   const { w, h, ink } = bin;
-  const prof = new Int32Array(h);
+  const prof = new Float64Array(h);
   for (let y = 0; y < h; y++) {
     let n = 0;
     for (let x = 0; x < w; x++) n += ink[y * w + x];
     prof[y] = n;
   }
-  let peak = 0;
-  for (const v of prof) peak = Math.max(peak, v);
-  if (!peak) return [];
+  return prof;
+}
 
-  const thr = Math.max(1, peak * minInk);
+function bandsAbove(prof, thr, minHeight) {
   const lines = [];
   let start = -1;
-  for (let y = 0; y <= h; y++) {
-    const on = y < h && prof[y] >= thr;
+  for (let y = 0; y <= prof.length; y++) {
+    const on = y < prof.length && prof[y] >= thr;
     if (on && start < 0) start = y;
     if (!on && start >= 0) {
       if (y - start >= minHeight) lines.push({ y0: start, y1: y });
       start = -1;
     }
   }
+  return lines;
+}
+
+/**
+ * Handyfoto-Pfad: lokale Minima im geglaetteten Profil als Zeilentrenner.
+ * Anschliessend kurze Fragmente zusammenkleben.
+ */
+function findLinesByValleys(bin, prof, peak, opts = {}) {
+  const {
+    minHeight = 8,
+    smooth = 3,
+    maxRel = 0.8,
+    minPeakFrac = 0.18,
+  } = opts;
+  const h = prof.length;
+  const sm = new Float64Array(h);
+  for (let y = 0; y < h; y++) {
+    let s = 0, c = 0;
+    for (let yy = Math.max(0, y - smooth); yy <= Math.min(h - 1, y + smooth); yy++) {
+      s += prof[yy];
+      c++;
+    }
+    sm[y] = s / c;
+  }
+
+  const splits = [-1];
+  for (let y = smooth; y < h - smooth; y++) {
+    if (!(sm[y] <= sm[y - 1] && sm[y] <= sm[y + 1])) continue;
+    let left = 0, right = 0;
+    for (let yy = Math.max(0, y - 40); yy < y; yy++) left = Math.max(left, sm[yy]);
+    for (let yy = y + 1; yy <= Math.min(h - 1, y + 40); yy++) right = Math.max(right, sm[yy]);
+    const neigh = Math.min(left, right);
+    if (neigh < peak * minPeakFrac) continue;
+    if (sm[y] / neigh <= maxRel && sm[y] / peak < 0.55) splits.push(y);
+  }
+  splits.push(h);
+
+  const uniq = [];
+  for (const s of splits) {
+    if (!uniq.length || s - uniq[uniq.length - 1] > 2) uniq.push(s);
+  }
+
+  let lines = [];
+  for (let i = 0; i < uniq.length - 1; i++) {
+    const y0 = uniq[i] + 1, y1 = uniq[i + 1];
+    if (y1 - y0 < minHeight) continue;
+    let inkSum = 0;
+    for (let y = y0; y < y1; y++) inkSum += prof[y];
+    if (inkSum < peak * 0.5) continue;
+    lines.push({ y0, y1 });
+  }
+
+  lines = mergeThinBands(lines);
+
+  if (lines.length >= 3) {
+    const hs = lines.map((l) => l.y1 - l.y0).sort((a, b) => a - b);
+    const med = hs[hs.length >> 1] || 20;
+    lines = lines.filter((l) => l.y1 - l.y0 <= med * 2.4);
+  }
+
   return lines.map((l) => withBounds(bin, l));
+}
+
+/** Klebt uebersplittene Kurzbaender (Luecke <= 3 px) zu einer Zeile. */
+function mergeThinBands(lines) {
+  if (lines.length < 2) return lines;
+  const heights = lines.map((l) => l.y1 - l.y0).sort((a, b) => a - b);
+  const target = heights[heights.length >> 1] || 20;
+  const out = [{ ...lines[0] }];
+  for (let i = 1; i < lines.length; i++) {
+    const prev = out[out.length - 1];
+    const cur = lines[i];
+    const gap = cur.y0 - prev.y1;
+    const mergedH = cur.y1 - prev.y0;
+    if (gap <= 3 && mergedH <= target * 1.65) {
+      prev.y1 = cur.y1;
+    } else {
+      out.push({ ...cur });
+    }
+  }
+  return out;
 }
 
 /** Beschneidet eine Zeile links/rechts auf den tatsaechlichen Tintenbereich. */

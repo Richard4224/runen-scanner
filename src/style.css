@@ -193,7 +193,9 @@ select {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 #loading-text { color: var(--dim); min-height: 1.4em; }
+#loading-detail { color: var(--ink); font-size: 0.95rem; min-height: 1.3em; }
 #loading-time { color: #6a5c46; font-size: 0.8rem; }
+#crop-estimate { margin: 0; }
 
 /* -- Result -- */
 #result-meta { color: var(--dim); font-size: 0.8rem; }

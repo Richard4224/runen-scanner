@@ -32,7 +32,8 @@
         <div class="handle se" data-h="se"></div>
       </div>
     </div>
-    <p style="color:var(--dim); font-size:0.85rem; margin:0;">Rahmen auf den Runentext ziehen.</p>
+    <p style="color:var(--dim); font-size:0.85rem; margin:0;">Rahmen auf den Runentext ziehen — je enger, desto schneller.</p>
+    <p id="crop-estimate" class="hint"></p>
     <label class="field">
       Sprache der Runen
       <select id="font-select"></select>
@@ -46,6 +47,7 @@
   <section id="screen-loading" class="screen">
     <div class="rune-spin">◈</div>
     <div id="loading-text">Die Runen werden befragt …</div>
+    <div id="loading-detail"></div>
     <div id="loading-time"></div>
     <button id="loading-cancel" class="ghost" type="button">Abbrechen</button>
   </section>

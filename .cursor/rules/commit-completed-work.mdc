@@ -1,0 +1,12 @@
+---
+description: Commit completed implementation work
+alwaysApply: true
+---
+
+# Commit Completed Work
+
+- After implementing and verifying a requested code change, create a git commit.
+- Commit only files relevant to the completed task; preserve unrelated user changes.
+- Use a concise German commit message describing the reason for the change.
+- Do not push unless the user explicitly requests it.
+- Do not commit when the task only inspects, explains, diagnoses, reviews, or plans.

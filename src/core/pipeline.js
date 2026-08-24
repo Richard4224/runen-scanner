@@ -8,8 +8,12 @@ import { ambiguityMap } from "./atlas.js";
 /**
  * Erkennt eine Seite in einer bekannten Sprache.
  * `img` ist ein Graustufenbild { w, h, data }.
+ * opts.onProgress?.(phase, info) fuer UI-Heartbeat (Browser-Worker).
  */
 export function readPage(img, atlas, fontName, opts = {}) {
+  const progress = opts.onProgress || (() => {});
+  progress("prepare", { w: img.w, h: img.h });
+
   let bin = normalizePolarity(binarize(img, opts.binarize));
   const despecklePasses = opts.despeckle ?? 0;
   for (let i = 0; i < despecklePasses; i++) bin = despeckle(bin);
@@ -35,9 +39,17 @@ export function readPage(img, atlas, fontName, opts = {}) {
     return g;
   };
 
+  const found = findLines(straight);
+  progress("lines", { total: found.length });
+
+  // Mega-Zeile = Zeilenerkennung fehlgeschlagen; DP wuerde Minuten brauchen.
+  const maxLineW = opts.maxLineWidth ?? Math.max(img.w, 800);
   const lines = [];
-  for (const line of findLines(straight)) {
+  for (let li = 0; li < found.length; li++) {
+    const line = found[li];
+    progress("line", { i: li + 1, total: found.length });
     const img2 = cropLine(straight, line);
+    if (img2.w > maxLineW * 1.15) continue;
 
     const tryCand = (cand) => {
       const glyphs = glyphsAt(cand.em);
@@ -90,9 +102,16 @@ export function readPage(img, atlas, fontName, opts = {}) {
  * nimmt die mit der besten Bewertung.
  */
 export function readPageAutoFont(img, atlas, opts = {}) {
+  const progress = opts.onProgress || (() => {});
+  const names = Object.keys(atlas.fonts);
   let best = null;
-  for (const name of Object.keys(atlas.fonts)) {
-    const res = readPage(img, atlas, name, opts);
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i];
+    progress("font", { i: i + 1, total: names.length, font: name });
+    const res = readPage(img, atlas, name, {
+      ...opts,
+      onProgress: (phase, info) => progress(phase, { ...info, font: name, fontI: i + 1, fontTotal: names.length }),
+    });
     if (!best || res.confidence > best.confidence) best = { ...res, font: name };
   }
   return best;

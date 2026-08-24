@@ -23,13 +23,18 @@ self.onmessage = (ev) => {
   const { w, h, data, font, auto } = ev.data;
   const img = { w, h, data: new Uint8Array(data) };
 
+  const onProgress = (phase, info = {}) => {
+    self.postMessage({ ok: true, progress: true, phase, ...info, w, h });
+  };
+
   try {
+    const t0 = Date.now();
     const res = auto
-      ? readPageAutoFont(img, atlas, DECODE_OPTS)
-      : { ...readPage(img, atlas, font, DECODE_OPTS), font };
+      ? readPageAutoFont(img, atlas, { ...DECODE_OPTS, onProgress })
+      : { ...readPage(img, atlas, font, { ...DECODE_OPTS, onProgress }), font };
 
     if (!res || !res.text) {
-      self.postMessage({ ok: true, empty: true });
+      self.postMessage({ ok: true, empty: true, ms: Date.now() - t0 });
       return;
     }
 
@@ -39,6 +44,8 @@ self.onmessage = (ev) => {
       font: res.font,
       confidence: res.confidence,
       chars: markAmbiguous(res.text, res.font),
+      lines: res.lines?.length ?? 0,
+      ms: Date.now() - t0,
     });
   } catch (err) {
     self.postMessage({ ok: false, error: String(err && err.message || err) });

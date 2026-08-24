@@ -20,6 +20,8 @@ const FONTS = [
 const fontLabel = (f) => f.replace(/^Phoenix-/, "").replace(/-/g, " ");
 
 const MAX_PROCESS_DIM = 1100;
+/** Watchdog: wenn der Worker so lange nichts meldet, Abbruch mit Fehler. */
+const WORKER_TIMEOUT_MS = 120_000;
 const FLAVOR = [
   "Die Runen werden befragt …",
   "Zeichen um Zeichen wird enthüllt …",
@@ -117,6 +119,7 @@ function layoutCrop() {
   const rw = cw * 0.85, rh = ch * 0.85;
   rect = { x: (cw - rw) / 2, y: (ch - rh) / 2, w: rw, h: rh };
   renderRect();
+  updateCropEstimate();
 }
 
 function renderRect() {
@@ -160,11 +163,45 @@ cropRectEl.addEventListener("pointermove", (ev) => {
   }
   rect = { x, y, w, h };
   renderRect();
+  updateCropEstimate();
 });
 function endDrag(ev) { if (drag) { try { cropRectEl.releasePointerCapture(ev.pointerId); } catch {} } drag = null; }
 cropRectEl.addEventListener("pointerup", endDrag);
 cropRectEl.addEventListener("pointercancel", endDrag);
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+/** Grobe ETA aus Prozess-Pixeln (iPhone ~ ein Kern). */
+function processSize() {
+  const sw = rect.w * dispScale, sh = rect.h * dispScale;
+  const scale = Math.min(1, MAX_PROCESS_DIM / Math.max(sw, sh));
+  const dw = Math.max(1, Math.round(sw * scale));
+  const dh = Math.max(1, Math.round(sh * scale));
+  return { dw, dh, px: dw * dh };
+}
+function estimateSeconds(px, auto) {
+  // Empirisch: ~1,2e5 Px/s auf einem Kern mit 5+5 Skalen; Auto × Schriftanzahl.
+  const fonts = auto ? FONTS.length : 1;
+  return Math.max(3, Math.round((px / 1.2e5) * fonts));
+}
+function formatEta(sec) {
+  if (sec < 60) return `ca. ${sec} s`;
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return s ? `ca. ${m} min ${s} s` : `ca. ${m} min`;
+}
+function updateCropEstimate() {
+  const el = $("crop-estimate");
+  if (!sourceImg || !el) return;
+  const { dw, dh, px } = processSize();
+  const auto = fontSelect.value === "__auto__";
+  const sec = estimateSeconds(px, auto);
+  const big = px > 700_000 || Math.max(dw, dh) >= MAX_PROCESS_DIM;
+  el.textContent =
+    `Ausschnitt → ${dw}×${dh} px` +
+    (big ? " (groß — Rahmen enger = schneller)" : "") +
+    ` · Schätzung ${formatEta(sec)}` +
+    (auto ? " · Auto prüft alle Schriften" : "");
+}
+fontSelect.addEventListener("change", updateCropEstimate);
 
 $("crop-cancel").addEventListener("click", () => { sourceImg = null; showScreen("start"); });
 $("crop-go").addEventListener("click", startDecode);
@@ -198,27 +235,78 @@ function startDecode() {
 
   const chosen = fontSelect.value;
   const auto = chosen === "__auto__";
+  const eta = estimateSeconds(dw * dh, auto);
 
   showScreen("loading");
-  startLoadingAnim();
+  startLoadingAnim({ dw, dh, eta, auto, font: auto ? null : chosen });
   runWorker({ w: dw, h: dh, data: g.buffer, font: auto ? null : chosen, auto }, g.buffer);
 }
 
-let loadingTimer = null, elapsedTimer = null, startedAt = 0;
-function startLoadingAnim() {
+let loadingTimer = null, elapsedTimer = null, startedAt = 0, watchdogTimer = null;
+let loadMeta = { eta: 0, dw: 0, dh: 0, auto: false };
+
+function startLoadingAnim({ dw, dh, eta, auto, font }) {
+  loadMeta = { eta, dw, dh, auto, font };
   let i = 0;
   $("loading-text").textContent = FLAVOR[0];
-  loadingTimer = setInterval(() => { i = (i + 1) % FLAVOR.length; $("loading-text").textContent = FLAVOR[i]; }, 2600);
+  $("loading-detail").textContent =
+    `${dw}×${dh} px · Schätzung ${formatEta(eta)}` +
+    (auto ? " · alle Schriften" : font ? ` · ${fontLabel(font)}` : "");
+  loadingTimer = setInterval(() => {
+    i = (i + 1) % FLAVOR.length;
+    $("loading-text").textContent = FLAVOR[i];
+  }, 2600);
   startedAt = Date.now();
-  $("loading-time").textContent = "";
+  $("loading-time").textContent = `00:00 / ${formatEta(eta)}`;
   elapsedTimer = setInterval(() => {
     const s = Math.floor((Date.now() - startedAt) / 1000);
-    $("loading-time").textContent = `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+    $("loading-time").textContent =
+      `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}` +
+      ` / ${formatEta(loadMeta.eta)}`;
   }, 250);
+  armWatchdog();
 }
+
+function armWatchdog() {
+  clearTimeout(watchdogTimer);
+  watchdogTimer = setTimeout(() => {
+    stopWorker();
+    showResult({
+      ok: false,
+      error:
+        "Zeitüberschreitung — der Scan hing (oft zu großer Ausschnitt oder schwierige Schrift). " +
+        "Rahmen enger setzen und erneut versuchen.",
+    });
+  }, WORKER_TIMEOUT_MS);
+}
+
+function onWorkerProgress(msg) {
+  armWatchdog(); // lebt noch
+  const detail = $("loading-detail");
+  if (!detail) return;
+  if (msg.phase === "prepare") {
+    detail.textContent = `Bild ${msg.w}×${msg.h} wird vorbereitet …`;
+  } else if (msg.phase === "lines") {
+    const eta = Math.max(3, Math.round((msg.total || 1) * (loadMeta.auto ? FONTS.length * 1.2 : 1.2)));
+    loadMeta.eta = eta;
+    detail.textContent = `${msg.total} Zeilen erkannt · neu ${formatEta(eta)}`;
+  } else if (msg.phase === "line") {
+    const fontBit = msg.font ? ` · ${fontLabel(msg.font)}` : "";
+    detail.textContent = `Zeile ${msg.i} von ${msg.total}${fontBit}`;
+    if (msg.total) {
+      const per = loadMeta.auto ? 1.2 : 1.2;
+      const fontsLeft = msg.fontTotal ? (msg.fontTotal - (msg.fontI || 1) + 1) : 1;
+      const linesLeft = Math.max(0, (msg.total - msg.i) + (fontsLeft - 1) * msg.total);
+      loadMeta.eta = Math.max(2, Math.round(linesLeft * per));
+    }
+  } else if (msg.phase === "font") {
+    detail.textContent = `Schrift ${msg.i}/${msg.total}: ${fontLabel(msg.font)}`;
+  }
+}
+
 function stopLoadingAnim() {
-  clearInterval(loadingTimer); clearInterval(elapsedTimer);
-  loadingTimer = elapsedTimer = null;
+  clearInterval(loadingTimer); clearInterval(elapsedTimer); clearTimeout(watchdogTimer);
+  loadingTimer = elapsedTimer = watchdogTimer = null;
 }
 
 let worker = null;
@@ -234,11 +322,33 @@ function stopWorker() {
   if (worker) { worker.terminate(); worker = null; }
 }
 function runWorker(payload, transfer) {
-  stopWorker();
+  // Nur alten Worker killen — Loading-UI bleibt (startDecode hat sie schon gestartet).
+  if (worker) { worker.terminate(); worker = null; }
   worker = makeWorker();
-  worker.onmessage = (ev) => { stopWorker(); showResult(ev.data); };
-  worker.onerror = (ev) => { stopWorker(); showResult({ ok: false, error: ev.message || "Unbekannter Fehler" }); };
-  worker.postMessage(payload, [transfer]);
+  worker.onmessage = (ev) => {
+    const data = ev.data;
+    if (data && data.progress) {
+      onWorkerProgress(data);
+      return;
+    }
+    stopWorker();
+    showResult(data);
+  };
+  worker.onerror = (ev) => {
+    stopWorker();
+    showResult({ ok: false, error: ev.message || "Unbekannter Fehler im Worker" });
+  };
+  worker.onmessageerror = () => {
+    stopWorker();
+    showResult({ ok: false, error: "Antwort vom Worker konnte nicht gelesen werden." });
+  };
+  armWatchdog();
+  try {
+    worker.postMessage(payload, [transfer]);
+  } catch (err) {
+    stopWorker();
+    showResult({ ok: false, error: String(err && err.message || err) });
+  }
 }
 
 // -- Woerterbuch: unscharfe Woerter durch das naheliegendste echte Wort
@@ -372,7 +482,10 @@ function showResult(res) {
     return;
   }
 
-  metaEl.textContent = `Sprache: ${fontLabel(res.font)}  ·  Sicherheit: ${Math.round(res.confidence * 100)}%`;
+  const sec = res.ms != null ? `  ·  ${(res.ms / 1000).toFixed(1)} s` : "";
+  metaEl.textContent =
+    `Sprache: ${fontLabel(res.font)}  ·  Sicherheit: ${Math.round(res.confidence * 100)}%` +
+    (res.lines ? `  ·  ${res.lines} Zeilen` : "") + sec;
   dictToggleWrap.classList.remove("hidden");
 
   const seen = new Map();
