@@ -30,12 +30,19 @@ export function findLines(bin, opts = {}) {
   for (const v of prof) peak = Math.max(peak, v);
   if (!peak) return [];
 
-  const classic = bandsAbove(prof, Math.max(1, peak * minInk), minHeight)
-    .map((l) => withBounds(bin, l));
-  const maxH = classic.reduce((m, l) => Math.max(m, l.y1 - l.y0), 0);
+  const classicBands = bandsAbove(prof, Math.max(1, peak * minInk), minHeight);
+  const classic = boundLines(bin, classicBands);
+  const maxH = classicBands.reduce((m, l) => Math.max(m, l.y1 - l.y0), 0);
+  const pitch = estimateLinePitch(prof);
   // Eine Zeile, die mehr als ~18 % der Seite einnimmt, ist auf einem Brief
   // unrealistisch — typisches Zeichen, dass der Schwellwert die Luecken nicht sieht.
-  if (classic.length >= 1 && maxH <= bin.h * 0.18) return classic;
+  if (classic.length >= 1 && maxH <= bin.h * 0.18) {
+    if (classic.length >= 3 && classic.length <= 8
+        && pitch >= 7 && maxH > pitch * 1.55) {
+      return boundLines(bin, splitTallBands(classicBands, pitch));
+    }
+    return classic;
+  }
 
   return findLinesByValleys(bin, prof, peak, opts);
 }
@@ -122,7 +129,15 @@ function findLinesByValleys(bin, prof, peak, opts = {}) {
     lines = lines.filter((l) => l.y1 - l.y0 <= med * 2.4);
   }
 
-  return lines.map((l) => withBounds(bin, l));
+  // Bei hohen/verbundenen Schriften (Taluz) beruehren sich benachbarte
+  // Textzeilen. Die Tal-Suche findet dann nur ganze Absaetze. Der periodische
+  // Zeilenabstand bleibt aber in der Ableitung des Profils sichtbar.
+  const pitch = estimateLinePitch(prof);
+  if (lines.length >= 3 && lines.length <= 8 && pitch >= 7) {
+    lines = splitTallBands(lines, pitch);
+  }
+
+  return boundLines(bin, lines);
 }
 
 /** Klebt uebersplittene Kurzbaender (Luecke <= 3 px) zu einer Zeile. */
@@ -145,6 +160,54 @@ function mergeThinBands(lines) {
   return out;
 }
 
+/** Staerkster periodischer Abstand im Hochpass-Zeilenprofil. */
+function estimateLinePitch(prof) {
+  if (prof.length < 30) return 0;
+  const diff = new Float64Array(prof.length);
+  for (let y = 1; y < prof.length; y++) diff[y] = prof[y] - prof[y - 1];
+  const lo = 6, hi = Math.min(80, Math.floor(prof.length / 3));
+  const scores = new Float64Array(hi + 1);
+  for (let lag = lo; lag <= hi; lag++) {
+    let s = 0, n = 0;
+    for (let y = 1; y + lag < diff.length; y++) {
+      s += diff[y] * diff[y + lag];
+      n++;
+    }
+    scores[lag] = s / Math.max(n, 1);
+  }
+  let best = 0, bestScore = 0;
+  for (let lag = lo + 1; lag < hi; lag++) {
+    if (scores[lag] >= scores[lag - 1]
+        && scores[lag] >= scores[lag + 1]
+        && scores[lag] > bestScore) {
+      best = lag;
+      bestScore = scores[lag];
+    }
+  }
+  return best;
+}
+
+/** Teilt Absatz-Baender gleichmaessig anhand des geschaetzten Zeilenabstands. */
+function splitTallBands(lines, pitch) {
+  const out = [];
+  for (const line of lines) {
+    const height = line.y1 - line.y0;
+    if (height <= pitch * 1.55) {
+      out.push(line);
+      continue;
+    }
+    const count = Math.max(2, Math.round((height + pitch * 0.15) / pitch));
+    const step = height / count;
+    for (let i = 0; i < count; i++) {
+      out.push({
+        y0: Math.floor(line.y0 + i * step),
+        y1: Math.ceil(line.y0 + (i + 1) * step),
+      });
+    }
+  }
+  return out;
+}
+
 /** Beschneidet eine Zeile links/rechts auf den tatsaechlichen Tintenbereich. */
 function withBounds(bin, line) {
   const { w, ink } = bin;
@@ -155,6 +218,12 @@ function withBounds(bin, line) {
     }
   }
   return { ...line, x0, x1: x1 + 1 };
+}
+
+function boundLines(bin, lines) {
+  return lines
+    .map((line) => withBounds(bin, line))
+    .filter((line) => line.x1 > line.x0 && line.y1 > line.y0);
 }
 
 /**

@@ -3,16 +3,16 @@
 // Browsertest, aber core/*.js ist bewusst DOM-frei und laeuft identisch hier.
 
 import fs from "node:fs";
-import jpeg from "jpeg-js";
 import { prepareAtlas } from "../src/core/atlas.js";
 import { readPageAutoFont, readPage } from "../src/core/pipeline.js";
+import { decodeJpegOriented } from "./image_io.mjs";
 
 const maxDim = Number(process.argv[3] || 1600);
 const file = process.argv[2] || "img/ABC test bild gerade.jpg";
 
 const atlas = prepareAtlas(JSON.parse(fs.readFileSync("src/atlas.json", "utf8")));
 
-const raw = jpeg.decode(fs.readFileSync(file), { useTArray: true });
+const raw = await decodeJpegOriented(file);
 console.log(`Quelle: ${raw.width}x${raw.height}`);
 
 function downscale(rgba, w, h, maxDim) {

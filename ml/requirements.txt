@@ -1,0 +1,6 @@
+torch
+pillow
+numpy
+fonttools
+onnx
+onnxruntime

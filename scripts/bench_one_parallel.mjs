@@ -8,13 +8,13 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
-import jpeg from "jpeg-js";
 
 import { prepareAtlas } from "../src/core/atlas.js";
 import { ambiguityMap } from "../src/core/atlas.js";
 import { binarize, despeckle, estimateSkew, normalizePolarity, rotate } from "../src/core/image.js";
 import { cropLine, findLines, fontExtent } from "../src/core/lines.js";
 import { buildDict, correctTokens } from "../src/core/dict.js";
+import { decodeJpegOriented } from "./image_io.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, "..");
@@ -87,6 +87,16 @@ function cropHeader(img, frac = 0.06) {
   return { w: img.w, h, data };
 }
 
+function cropSides(img, frac = 0.06) {
+  const x0 = Math.round(img.w * frac), x1 = Math.round(img.w * (1 - frac));
+  const w = x1 - x0;
+  const data = new Uint8Array(w * img.h);
+  for (let y = 0; y < img.h; y++) {
+    data.set(img.data.subarray(y * img.w + x0, y * img.w + x1), y * w);
+  }
+  return { w, h: img.h, data };
+}
+
 const want = norm(fs.readFileSync(path.join(root, "test material", brief), "utf8"));
 const atlas = prepareAtlas(JSON.parse(fs.readFileSync(path.join(root, "src", "atlas.json"), "utf8")));
 if (!atlas.fonts[font]) {
@@ -95,10 +105,10 @@ if (!atlas.fonts[font]) {
 }
 
 const tAll = Date.now();
-const raw = jpeg.decode(fs.readFileSync(filePath), { useTArray: true });
+const raw = await decodeJpegOriented(filePath);
 const small = downscale(raw.data, raw.width, raw.height, maxDim);
 let img = gray(small.w, small.h, small.data);
-img = cropHeader(img);
+img = cropSides(cropHeader(img));
 
 let bin = normalizePolarity(binarize(img));
 const skew = estimateSkew(bin);

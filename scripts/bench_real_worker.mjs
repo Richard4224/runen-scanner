@@ -3,11 +3,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parentPort, workerData } from "node:worker_threads";
-import jpeg from "jpeg-js";
 
 import { prepareAtlas } from "../src/core/atlas.js";
 import { readPage } from "../src/core/pipeline.js";
 import { buildDict, correctTokens } from "../src/core/dict.js";
+import { decodeJpegOriented } from "./image_io.mjs";
 
 function distance(a, b) {
   if (a === b) return 0;
@@ -65,6 +65,16 @@ function cropHeader(img, frac = 0.06) {
   return { w: img.w, h, data };
 }
 
+function cropSides(img, frac = 0.06) {
+  const x0 = Math.round(img.w * frac), x1 = Math.round(img.w * (1 - frac));
+  const w = x1 - x0;
+  const data = new Uint8Array(w * img.h);
+  for (let y = 0; y < img.h; y++) {
+    data.set(img.data.subarray(y * img.w + x0, y * img.w + x1), y * w);
+  }
+  return { w, h: img.h, data };
+}
+
 const translit = (w) =>
   w
     .toUpperCase()
@@ -84,10 +94,10 @@ const dict = dictPayload
 const out = [];
 for (const item of items) {
   const t0 = Date.now();
-  const raw = jpeg.decode(fs.readFileSync(path.join(imgDir, item.file)), { useTArray: true });
+  const raw = await decodeJpegOriented(path.join(imgDir, item.file));
   const small = downscale(raw.data, raw.width, raw.height, maxDim);
   let img = gray(small.w, small.h, small.data);
-  img = cropHeader(img);
+  img = cropSides(cropHeader(img));
 
   const res = readPage(img, atlas, item.font);
   let got = norm(res?.text || "");
