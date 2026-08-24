@@ -39,7 +39,9 @@ export function readPage(img, atlas, fontName, opts = {}) {
     return g;
   };
 
-  const found = findLines(straight);
+  // Phoenix-Runen nutzt grosse, stark ornamentierte Glyphen. Deren interne
+  // Querstriche sehen in der Autokorrelation wie viele kleine Textzeilen aus.
+  const found = findLines(straight, { splitConnected: fontName !== "Phoenix-Runen" });
   progress("lines", { total: found.length });
 
   // Mega-Zeile = Zeilenerkennung fehlgeschlagen; DP wuerde Minuten brauchen.

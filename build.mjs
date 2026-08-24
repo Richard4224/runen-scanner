@@ -28,8 +28,8 @@ fs.writeFileSync(
 
 // 1b. Woerterbuch: Haeufigkeitsliste, aber nur Woerter die Hunspell (igerman98)
 // als echtes Deutsch kennt -- sonst landen Crawl-Muellwoerter wie TASI vor
-// TAXI. Zusaetzlich alle Hunspell-Staemme (Taxi, Sachsen, Muenchen, ...) und
-// die Bindestrich-Bundeslaender, die als ein Token nicht im Dic stehen.
+// TAXI. Fuer mobile Laufzeit nur die 12.000 haeufigsten bestaetigten Woerter;
+// Fantasy-/LARP-Woerter und Bindestrich-Bundeslaender kommen gezielt dazu.
 // Die Rune-Fonts kennen keine Umlaute/ß -- Abgleich immer A-Z (ae/oe/ue/ss).
 const translit = (w) =>
   w.toUpperCase()
@@ -113,6 +113,7 @@ function isNounKey(t) {
 const words = [];
 const nounFlags = [];
 const seen = new Set();
+const MAX_COMMON_WORDS = 12_000;
 function addWord(t, noun) {
   if (t.length < 2 || seen.has(t)) return;
   seen.add(t);
@@ -124,15 +125,7 @@ for (const w of germanWords) {
   const t = translit(w);
   if (t.length < 2 || seen.has(t) || !isGerman(w)) continue;
   addWord(t, isNounKey(t));
-}
-
-for (const line of dicText.split(/\r?\n/)) {
-  if (!line || line.startsWith("\t") || line.startsWith("#")) continue;
-  if (/^\d+$/.test(line.trim())) continue;
-  const raw = line.split("/")[0].trim();
-  if (raw.length <= 3 && raw === raw.toUpperCase() && !isGerman(raw.toLowerCase())) continue;
-  const t = translit(raw);
-  addWord(t, isNounKey(t));
+  if (words.length >= MAX_COMMON_WORDS) break;
 }
 
 for (const w of [
@@ -193,6 +186,7 @@ writeCrnnModule({}, "");
 const cloudflareWorkerCode = await bundle("worker.js");
 writeCrnnModule(crnnModels, ortWasm.toString("base64"));
 const appCode = await bundle("app.js");
+const dictWorkerCode = await bundle("dict-worker.js");
 
 // 3. Offline-Einzeldatei und schlanken Cloudflare-Build erzeugen.
 const css = fs.readFileSync(path.join(src, "style.css"), "utf8");
@@ -204,7 +198,10 @@ function renderHtml(worker) {
   );
   return html.replace(
     '<script type="module" src="app.js"></script>',
-    `<script>\nglobalThis.__WORKER_SRC__ = ${JSON.stringify(worker)};\n</script>\n<script>\n${appCode}\n</script>`,
+    `<script>\n` +
+    `globalThis.__WORKER_SRC__ = ${JSON.stringify(worker)};\n` +
+    `globalThis.__DICT_WORKER_SRC__ = ${JSON.stringify(dictWorkerCode)};\n` +
+    `</script>\n<script>\n${appCode}\n</script>`,
   );
 }
 

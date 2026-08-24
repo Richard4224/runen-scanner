@@ -90,7 +90,7 @@ self.onmessage = async (ev) => {
       }
       onProgress("model");
       const session = await getCrnnSession(font, assetBase);
-      res = { ...await readPageCrnn(img, ort, session, { onProgress }), font };
+      res = { ...await readPageCrnn(img, ort, session, { onProgress, font }), font };
     } else {
       res = auto
         ? readPageAutoFont(img, atlas, { ...DECODE_OPTS, onProgress })

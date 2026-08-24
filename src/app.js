@@ -5,7 +5,7 @@
 // alles in einer einzigen HTML-Datei funktioniert).
 
 import { DICT_WORDS, CUSTOM_WORDS, DICT_NOUN_BITS } from "./generated-dict.js";
-import { buildDict, correctWord as guessWord, correctTokens, formatWord } from "./core/dict.js";
+import { buildDict } from "./core/dict.js";
 
 const FONTS = [
   "Phoenix-Runen",
@@ -227,8 +227,15 @@ crnnToggle.addEventListener("change", () => {
 
 $("crop-cancel").addEventListener("click", () => { sourceImg = null; showScreen("start"); });
 $("crop-go").addEventListener("click", startDecode);
-$("result-again").addEventListener("click", () => { sourceImg = null; showScreen("start"); });
-$("result-retry").addEventListener("click", () => showScreen("crop"));
+$("result-again").addEventListener("click", () => {
+  stopDictCorrection();
+  sourceImg = null;
+  showScreen("start");
+});
+$("result-retry").addEventListener("click", () => {
+  stopDictCorrection();
+  showScreen("crop");
+});
 $("loading-cancel").addEventListener("click", () => { stopWorker(); showScreen("crop"); });
 
 // -- Bild vorbereiten & an den Worker schicken --
@@ -344,13 +351,14 @@ function stopLoadingAnim() {
 }
 
 let worker = null;
-function makeWorker() {
-  const blob = new Blob([globalThis.__WORKER_SRC__], { type: "application/javascript" });
+function makeBlobWorker(source) {
+  const blob = new Blob([source], { type: "application/javascript" });
   const url = URL.createObjectURL(blob);
   const w = new Worker(url);
   URL.revokeObjectURL(url);
   return w;
 }
+function makeWorker() { return makeBlobWorker(globalThis.__WORKER_SRC__); }
 function stopWorker() {
   stopLoadingAnim();
   if (worker) { worker.terminate(); worker = null; }
@@ -384,11 +392,9 @@ function runWorker(payload, transfer) {
   }
 }
 
-// -- Woerterbuch: unscharfe Woerter durch das naheliegendste echte Wort
-//    ersetzen. Reine Nachbearbeitung des bereits entzifferten Texts, ohne
-//    erneuten (teuren) Decode-Lauf -- daher direkt im Hauptthread.
+// -- Woerterbuch-Grunddaten fuer schnelle Gross-/Kleinschreibung. Die teure
+//    unscharfe Korrektur laeuft separat in einem abbrechbaren Worker.
 const dict = buildDict(DICT_WORDS, CUSTOM_WORDS, DICT_NOUN_BITS);
-const correctWord = (word) => guessWord(word, dict);
 
 /** Gruppiert die Zeichenliste des Workers in Wort-Spannen und Trenner. */
 function tokenize(chars) {
@@ -444,50 +450,56 @@ function renderRaw(container, chars) {
   }
 }
 
-function renderDict(container, chars) {
-  const changed = new Map();
-  let sentence = true;
-  let lineWords = [];
-  let lineSeps = []; // parallel: after each word, what sep follows (space/newline/end)
-
-  const flushLine = () => {
-    if (!lineWords.length) return;
-    const raw = lineWords.map((t) => t.chars.map((c) => c.ch).join(""));
-    const fixed = correctTokens(raw, dict);
-    if (fixed.join(" ") !== raw.join(" ")) {
-      changed.set(raw.join(" "), fixed.join(" "));
-    }
-    for (let i = 0; i < fixed.length; i++) {
-      if (i) container.appendChild(document.createTextNode(" "));
-      const w = fixed[i];
-      const span = document.createElement("span");
-      if (fixed.join(" ") !== raw.join(" ")) span.className = "corrected";
-      span.textContent = formatWord(w, dict, i === 0 && sentence);
-      container.appendChild(span);
-    }
-    sentence = false;
-    lineWords = [];
-  };
-
-  for (const tok of tokenize(chars)) {
-    if (tok.type === "word") {
-      lineWords.push(tok);
-      continue;
-    }
-    if (tok.ch === "\n") {
-      flushLine();
-      container.appendChild(document.createElement("br"));
-      sentence = true;
-    }
-    // Spaces between words on the same line are re-emitted by flushLine.
-  }
-  flushLine();
-  return changed;
-}
-
 const dictToggleWrap = $("dict-toggle-wrap");
 const dictToggle = $("dict-toggle");
+const dictCancel = $("dict-cancel");
 let lastResult = null;
+let dictWorker = null, dictJob = 0;
+
+function stopDictCorrection(message = "") {
+  dictJob++;
+  if (dictWorker) {
+    dictWorker.terminate();
+    dictWorker = null;
+  }
+  dictCancel.classList.add("hidden");
+  if (message) $("dict-legend").textContent = message;
+}
+
+function startDictCorrection(chars) {
+  const id = ++dictJob;
+  const legend = $("dict-legend");
+  const textEl = $("result-text");
+  const raw = chars.map((item) => item.ch).join("");
+  dictWorker = makeBlobWorker(globalThis.__DICT_WORKER_SRC__);
+  dictCancel.classList.remove("hidden");
+  legend.textContent = "Wörterbuch wird geprüft …";
+  dictWorker.onmessage = (ev) => {
+    const data = ev.data;
+    if (!data || data.id !== id) return;
+    if (data.progress) {
+      legend.textContent = `Wörterbuch: Zeile ${data.i} von ${data.total} …`;
+      return;
+    }
+    const finished = dictWorker;
+    dictWorker = null;
+    finished?.terminate();
+    dictCancel.classList.add("hidden");
+    if (!data.ok) {
+      legend.textContent = `Wörterbuchfehler: ${data.error || "unbekannt"}`;
+      return;
+    }
+    textEl.textContent = data.text;
+    legend.textContent = data.changed?.length
+      ? "Angepasst: " + data.changed.map(([a, b]) => `${a} → ${b}`).join(", ")
+      : "Wörterbuch: keine Änderungen";
+  };
+  dictWorker.onerror = (ev) => {
+    if (id !== dictJob) return;
+    stopDictCorrection(`Wörterbuchfehler: ${ev.message || "unbekannt"}`);
+  };
+  dictWorker.postMessage({ id, text: raw });
+}
 
 function showResult(res) {
   const errorBox = $("error-box");
@@ -501,6 +513,7 @@ function showResult(res) {
   legendEl.textContent = "";
   dictLegendEl.textContent = "";
   dictToggleWrap.classList.add("hidden");
+  stopDictCorrection();
   lastResult = res;
 
   if (!res || !res.ok) {
@@ -530,23 +543,24 @@ function showResult(res) {
     legendEl.textContent = "Unsicher (mehrere Runen sehen gleich aus): " + [...seen.keys()].join(", ");
   }
 
-  renderResultText();
   showScreen("result");
+  renderResultText();
 }
 
 function renderResultText() {
   if (!lastResult || !lastResult.ok || lastResult.empty) return;
   const textEl = $("result-text");
   const dictLegendEl = $("dict-legend");
+  stopDictCorrection();
   textEl.textContent = "";
+  renderRaw(textEl, lastResult.chars);
+  dictLegendEl.textContent = "";
   if (dictToggle.checked && lastResult.engine !== "crnn") {
-    const changed = renderDict(textEl, lastResult.chars);
-    dictLegendEl.textContent = changed.size
-      ? "Angepasst: " + [...changed.entries()].map(([a, b]) => `${a} → ${b}`).join(", ")
-      : "";
-  } else {
-    renderRaw(textEl, lastResult.chars);
-    dictLegendEl.textContent = "";
+    startDictCorrection(lastResult.chars);
   }
 }
 dictToggle.addEventListener("change", renderResultText);
+dictCancel.addEventListener("click", () => {
+  dictToggle.checked = false;
+  stopDictCorrection("Wörterbuch abgebrochen – Rohtext bleibt sichtbar.");
+});

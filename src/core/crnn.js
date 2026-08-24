@@ -55,7 +55,9 @@ export async function readPageCrnn(img, ort, session, opts = {}) {
   const skew = estimateSkew(binary);
   binary = rotate(binary, skew);
 
-  const boxes = findLines(binary);
+  const boxes = findLines(binary, {
+    splitConnected: opts.font !== "Phoenix-Runen",
+  });
   progress("lines", { total: boxes.length });
   const lines = [];
   for (let i = 0; i < boxes.length; i++) {

@@ -24,7 +24,7 @@ export function fontExtent(font, emPx) {
  * Profil, sonst verschmelzen alle Zeilen zu einer Mega-Zeile.
  */
 export function findLines(bin, opts = {}) {
-  const { minInk = 0.02, minHeight = 8 } = opts;
+  const { minInk = 0.02, minHeight = 8, splitConnected = true } = opts;
   const prof = rowProfile(bin);
   let peak = 0;
   for (const v of prof) peak = Math.max(peak, v);
@@ -34,10 +34,16 @@ export function findLines(bin, opts = {}) {
   const classic = boundLines(bin, classicBands);
   const maxH = classicBands.reduce((m, l) => Math.max(m, l.y1 - l.y0), 0);
   const pitch = estimateLinePitch(prof);
+  // Bei großen Phoenix-Runen sind hohe klassische Bänder echte Zeilen.
+  // Tal-/Periodensuche würde ihre ornamentierten Querstriche zerschneiden.
+  if (!splitConnected && classic.length) return classic;
   // Eine Zeile, die mehr als ~18 % der Seite einnimmt, ist auf einem Brief
   // unrealistisch — typisches Zeichen, dass der Schwellwert die Luecken nicht sieht.
   if (classic.length >= 1 && maxH <= bin.h * 0.18) {
-    if (classic.length >= 3 && classic.length <= 12
+    const maySplitClassic = splitConnected
+      ? classic.length >= 3 && classic.length <= 12
+      : classic.length === 1;
+    if (maySplitClassic
         && pitch >= 7 && maxH > pitch * 1.55) {
       return boundLines(bin, splitTallBands(classicBands, pitch));
     }
@@ -133,7 +139,10 @@ function findLinesByValleys(bin, prof, peak, opts = {}) {
   // Textzeilen. Die Tal-Suche findet dann nur ganze Absaetze. Der periodische
   // Zeilenabstand bleibt aber in der Ableitung des Profils sichtbar.
   const pitch = estimateLinePitch(prof);
-  if (lines.length >= 3 && lines.length <= 12 && pitch >= 7) {
+  const maySplitValleys = opts.splitConnected !== false
+    ? lines.length >= 3 && lines.length <= 12
+    : lines.length === 1;
+  if (maySplitValleys && pitch >= 7) {
     lines = splitTallBands(lines, pitch);
   }
 
