@@ -37,7 +37,7 @@ export function findLines(bin, opts = {}) {
   // Eine Zeile, die mehr als ~18 % der Seite einnimmt, ist auf einem Brief
   // unrealistisch — typisches Zeichen, dass der Schwellwert die Luecken nicht sieht.
   if (classic.length >= 1 && maxH <= bin.h * 0.18) {
-    if (classic.length >= 3 && classic.length <= 8
+    if (classic.length >= 3 && classic.length <= 12
         && pitch >= 7 && maxH > pitch * 1.55) {
       return boundLines(bin, splitTallBands(classicBands, pitch));
     }
@@ -133,7 +133,7 @@ function findLinesByValleys(bin, prof, peak, opts = {}) {
   // Textzeilen. Die Tal-Suche findet dann nur ganze Absaetze. Der periodische
   // Zeilenabstand bleibt aber in der Ableitung des Profils sichtbar.
   const pitch = estimateLinePitch(prof);
-  if (lines.length >= 3 && lines.length <= 8 && pitch >= 7) {
+  if (lines.length >= 3 && lines.length <= 12 && pitch >= 7) {
     lines = splitTallBands(lines, pitch);
   }
 

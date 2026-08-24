@@ -41,6 +41,9 @@ const cropCanvas = $("crop-canvas");
 const cropWrap = $("crop-wrap");
 const cropRectEl = $("crop-rect");
 const fontSelect = $("font-select");
+const crnnWrap = $("crnn-wrap");
+const crnnToggle = $("crnn-toggle");
+const crnnHint = $("crnn-hint");
 
 for (const f of FONTS) {
   const opt = document.createElement("option");
@@ -52,6 +55,16 @@ const autoOpt = document.createElement("option");
 autoOpt.value = "__auto__";
 autoOpt.textContent = "Automatisch (langsamer)";
 fontSelect.appendChild(autoOpt);
+
+function crnnSelected() {
+  return fontSelect.value === "Phoenix-Taluz" && crnnToggle.checked;
+}
+
+function updateEngineChoice() {
+  const available = fontSelect.value === "Phoenix-Taluz";
+  crnnWrap.classList.toggle("hidden", !available);
+  crnnHint.classList.toggle("hidden", !available || !crnnToggle.checked);
+}
 
 let sourceImg = null;    // HTMLImageElement, EXIF-korrigiert
 let dispScale = 1;       // Canvas-CSS-Px -> Bild-Px
@@ -178,7 +191,8 @@ function processSize() {
   const dh = Math.max(1, Math.round(sh * scale));
   return { dw, dh, px: dw * dh };
 }
-function estimateSeconds(px, auto) {
+function estimateSeconds(px, auto, crnn = false) {
+  if (crnn) return Math.max(8, Math.round(6 + px / 400_000));
   // Empirisch: ~1,2e5 Px/s auf einem Kern mit 5+5 Skalen; Auto × Schriftanzahl.
   const fonts = auto ? FONTS.length : 1;
   return Math.max(3, Math.round((px / 1.2e5) * fonts));
@@ -193,15 +207,23 @@ function updateCropEstimate() {
   if (!sourceImg || !el) return;
   const { dw, dh, px } = processSize();
   const auto = fontSelect.value === "__auto__";
-  const sec = estimateSeconds(px, auto);
+  const crnn = crnnSelected();
+  const sec = estimateSeconds(px, auto, crnn);
   const big = px > 700_000 || Math.max(dw, dh) >= MAX_PROCESS_DIM;
   el.textContent =
     `Ausschnitt → ${dw}×${dh} px` +
     (big ? " (groß — Rahmen enger = schneller)" : "") +
     ` · Schätzung ${formatEta(sec)}` +
-    (auto ? " · Auto prüft alle Schriften" : "");
+    (auto ? " · Auto prüft alle Schriften" : crnn ? " · Schnellmodell" : "");
 }
-fontSelect.addEventListener("change", updateCropEstimate);
+fontSelect.addEventListener("change", () => {
+  updateEngineChoice();
+  updateCropEstimate();
+});
+crnnToggle.addEventListener("change", () => {
+  updateEngineChoice();
+  updateCropEstimate();
+});
 
 $("crop-cancel").addEventListener("click", () => { sourceImg = null; showScreen("start"); });
 $("crop-go").addEventListener("click", startDecode);
@@ -235,23 +257,25 @@ function startDecode() {
 
   const chosen = fontSelect.value;
   const auto = chosen === "__auto__";
-  const eta = estimateSeconds(dw * dh, auto);
+  const engine = crnnSelected() ? "crnn" : "classic";
+  const eta = estimateSeconds(dw * dh, auto, engine === "crnn");
 
   showScreen("loading");
-  startLoadingAnim({ dw, dh, eta, auto, font: auto ? null : chosen });
-  runWorker({ w: dw, h: dh, data: g.buffer, font: auto ? null : chosen, auto }, g.buffer);
+  startLoadingAnim({ dw, dh, eta, auto, font: auto ? null : chosen, engine });
+  runWorker({ w: dw, h: dh, data: g.buffer, font: auto ? null : chosen, auto, engine }, g.buffer);
 }
 
 let loadingTimer = null, elapsedTimer = null, startedAt = 0, watchdogTimer = null;
 let loadMeta = { eta: 0, dw: 0, dh: 0, auto: false };
 
-function startLoadingAnim({ dw, dh, eta, auto, font }) {
-  loadMeta = { eta, dw, dh, auto, font };
+function startLoadingAnim({ dw, dh, eta, auto, font, engine }) {
+  loadMeta = { eta, dw, dh, auto, font, engine };
   let i = 0;
   $("loading-text").textContent = FLAVOR[0];
   $("loading-detail").textContent =
     `${dw}×${dh} px · Schätzung ${formatEta(eta)}` +
-    (auto ? " · alle Schriften" : font ? ` · ${fontLabel(font)}` : "");
+    (auto ? " · alle Schriften" : font ? ` · ${fontLabel(font)}` : "") +
+    (engine === "crnn" ? " · Schnellmodell" : "");
   loadingTimer = setInterval(() => {
     i = (i + 1) % FLAVOR.length;
     $("loading-text").textContent = FLAVOR[i];
@@ -284,7 +308,9 @@ function onWorkerProgress(msg) {
   armWatchdog(); // lebt noch
   const detail = $("loading-detail");
   if (!detail) return;
-  if (msg.phase === "prepare") {
+  if (msg.phase === "model") {
+    detail.textContent = "Schnellmodell wird beim ersten Start vorbereitet …";
+  } else if (msg.phase === "prepare") {
     detail.textContent = `Bild ${msg.w}×${msg.h} wird vorbereitet …`;
   } else if (msg.phase === "lines") {
     const eta = Math.max(3, Math.round((msg.total || 1) * (loadMeta.auto ? FONTS.length * 1.2 : 1.2)));
@@ -322,16 +348,15 @@ function stopWorker() {
   if (worker) { worker.terminate(); worker = null; }
 }
 function runWorker(payload, transfer) {
-  // Nur alten Worker killen — Loading-UI bleibt (startDecode hat sie schon gestartet).
-  if (worker) { worker.terminate(); worker = null; }
-  worker = makeWorker();
+  // Worker wiederverwenden: Das Schnellmodell muss dann nur einmal kompiliert werden.
+  if (!worker) worker = makeWorker();
   worker.onmessage = (ev) => {
     const data = ev.data;
     if (data && data.progress) {
       onWorkerProgress(data);
       return;
     }
-    stopWorker();
+    stopLoadingAnim();
     showResult(data);
   };
   worker.onerror = (ev) => {
@@ -483,10 +508,13 @@ function showResult(res) {
   }
 
   const sec = res.ms != null ? `  ·  ${(res.ms / 1000).toFixed(1)} s` : "";
+  const engine = res.engine === "crnn";
   metaEl.textContent =
-    `Sprache: ${fontLabel(res.font)}  ·  Sicherheit: ${Math.round(res.confidence * 100)}%` +
+    `Sprache: ${fontLabel(res.font)}` +
+    (engine ? "  ·  Schnellmodell (experimentell)" : `  ·  Sicherheit: ${Math.round(res.confidence * 100)}%`) +
     (res.lines ? `  ·  ${res.lines} Zeilen` : "") + sec;
-  dictToggleWrap.classList.remove("hidden");
+  dictToggle.checked = res.engine !== "crnn";
+  dictToggleWrap.classList.toggle("hidden", res.engine === "crnn");
 
   const seen = new Map();
   for (const { alt } of res.chars) if (alt) seen.set(alt, true);
@@ -503,7 +531,7 @@ function renderResultText() {
   const textEl = $("result-text");
   const dictLegendEl = $("dict-legend");
   textEl.textContent = "";
-  if (dictToggle.checked) {
+  if (dictToggle.checked && lastResult.engine !== "crnn") {
     const changed = renderDict(textEl, lastResult.chars);
     dictLegendEl.textContent = changed.size
       ? "Angepasst: " + [...changed.entries()].map(([a, b]) => `${a} → ${b}`).join(", ")

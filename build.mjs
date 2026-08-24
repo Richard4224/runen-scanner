@@ -52,6 +52,18 @@ function isGerman(w) {
 const require = (await import("node:module")).createRequire(import.meta.url);
 const germanWords = require("an-array-of-german-words");
 
+// 1c. Experimentelles Taluz-CRNN samt WASM-Laufzeit inline einbetten.
+// Dadurch bleibt auch der schnelle Modus eine einzige offline-faehige HTML.
+const crnnModel = fs.readFileSync(path.join(here, "models", "taluz-crnn.onnx"));
+const ortWasmPath = require.resolve("onnxruntime-web/ort-wasm-simd-threaded.wasm");
+const ortWasm = fs.readFileSync(ortWasmPath);
+fs.writeFileSync(
+  path.join(src, "generated-crnn.js"),
+  `// Automatisch erzeugt von build.mjs -- nicht von Hand bearbeiten.\n` +
+  `export const TALUZ_MODEL_BASE64 = ${JSON.stringify(crnnModel.toString("base64"))};\n` +
+  `export const ORT_WASM_BASE64 = ${JSON.stringify(ortWasm.toString("base64"))};\n`,
+);
+
 const customLines = fs.readFileSync(path.join(src, "custom-words.txt"), "utf8")
   .split("\n")
   .map((l) => l.trim())

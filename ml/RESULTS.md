@@ -11,7 +11,7 @@ trainiert; die echten Fotos waren nicht im Training.
 - ONNX-Größe: 1,03 MB
 - Eingabe: binäre Zeile, 48 Pixel hoch, dynamische Breite
 - Ausgabe: A-Z und Leerzeichen
-- Synthetische Validierungs-CER: 4,28 %
+- Synthetische Validierungs-CER nach Absatz-Finetuning: 1,79 %
 
 Taluz hat optisch identische Zeichen (`Q=T`, `V=L`). Im Training werden diese
 auf `T` und `L` kanonisiert. Die endgültige Wahl muss später ein Sprachmodell
@@ -23,9 +23,9 @@ oder Wörterbuch treffen.
 
 - 25 erkannte Zeilen
 - Vorbereitung: 0,09 s
-- ONNX-Inferenz: 0,06 s / 2,2 ms pro Zeile
-- rohe CER: 39,7 %
-- um Taluz-Mehrdeutigkeiten bereinigte CER: 39,6 %
+- ONNX-Inferenz: 0,05 s / 2,0 ms pro Zeile
+- rohe CER: 39,1 %
+- um Taluz-Mehrdeutigkeiten bereinigte CER: 38,8 %
 
 Zum Vergleich braucht der bisherige Sliding-Window-DP auf demselben,
 EXIF-korrigierten Foto 13,9 s Decode-Zeit und erreicht 94,9 % CER.
@@ -34,9 +34,9 @@ EXIF-korrigierten Foto 13,9 s Decode-Zeit und erreicht 94,9 % CER.
 
 - 47 erkannte Zeilen
 - Vorbereitung: 0,12 s
-- ONNX-Inferenz: 0,14 s / 3,0 ms pro Zeile
-- rohe CER: 36,3 %
-- bereinigte CER: 35,9 %
+- ONNX-Inferenz: 0,12 s / 2,5 ms pro Zeile
+- rohe CER: 33,6 %
+- bereinigte CER: 33,3 %
 
 ## Urteil
 
@@ -44,19 +44,28 @@ Der Spike erfüllt Größe und Geschwindigkeit deutlich, aber noch nicht das
 Ziel von unter 10 % CER auf echten Fotos. Tiny-CRNN+CTC ist damit als
 Laufzeit-Architektur plausibel, aber noch nicht bereit für die Website.
 
+Der Generator rendert inzwischen vollständige Absätze, binarisiert sie als
+Ganzes und schneidet danach dieselben periodischen Zeilenbänder wie der
+Browser aus. Das verbessert besonders A1, schließt den Domain-Gap aber nicht.
+
 Der größte verbliebene Fehler entsteht bei eng gesetztem Taluz: benachbarte
 Runen überlappen vertikal, sodass die Projektionssegmentierung Zeilen nur über
-den periodischen Grundlinienabstand trennt. Die synthetischen Einzelzeilen
-decken diese realen Ausschnitte noch nicht genau genug ab. Ein Wörterbuchlauf
-senkte B2 in diesem Zustand nicht und war wesentlich langsamer als die
-Inferenz.
+den periodischen Grundlinienabstand trennt. Die synthetischen Absatzausschnitte
+decken diese realen Ausschnitte trotz Absatz-Finetuning noch nicht genau genug
+ab. Ein Wörterbuchlauf senkte B2 in diesem Zustand nicht und war wesentlich
+langsamer als die Inferenz.
 
-Sinnvoller nächster Versuch:
+## Experimenteller Browsermodus
 
-1. synthetische ganze Absätze mit exakt der ODT-Zeilenhöhe rendern,
-2. nach derselben Projektion wie echte Fotos in Zeilen schneiden,
-3. B2 weiterhin nur validieren,
-4. erst bei deutlich niedrigerer echter CER ONNX Runtime Web integrieren.
+Das Modell ist als ausdrücklich experimenteller Taluz-Schalter in die statische
+Website integriert. ONNX Runtime Web, WASM und Modell liegen vollständig in
+`dist/index.html`; der Modus bleibt daher offline nutzbar. Das macht die Datei
+etwa 21 MB groß. Ein End-to-End-Test in Chromium benötigte beim ersten Lauf
+0,8 s und beim zweiten Lauf mit wiederverwendetem Worker 0,6 s. Die Laufzeit
+auf iPhone/Safari muss Benedikt noch real messen.
+
+Sinnvoller nächster Genauigkeitsschritt ist echtes Domain-Adaptation-Training
+mit getrenntem Trainings-/Validierungsfoto oder ein CTC-Beam mit Sprachmodell.
 
 Außerdem wurde ein Benchmarkfehler behoben: `jpeg-js` berücksichtigt die
 iPhone-EXIF-Ausrichtung nicht. Alle Realbild-Benchmarks wenden sie jetzt vor

@@ -19,8 +19,16 @@ npm install
 
 Das Training nutzt ausschließlich synthetische Zeilen aus dem TTF. Perspektive,
 Unschärfe, Schatten, Rauschen, Skalierung und JPEG-Artefakte werden zufällig
-erzeugt. Das Modell landet in `models/taluz-crnn.onnx`; der beste PyTorch-
+erzeugt. Der Fotopfad rendert außerdem vollständige, eng gesetzte Absätze,
+binarisiert sie als Ganzes und schneidet erst danach die Zielzeile aus. Das
+Modell landet in `models/taluz-crnn.onnx`; der beste PyTorch-
 Checkpoint unter `ml/checkpoints/` wird nicht committed.
+
+Ein vorhandener Checkpoint kann gezielt weitertrainiert werden:
+
+```powershell
+.\.venv\Scripts\python ml\train_crnn.py --font Phoenix-Taluz --resume --clean-epochs 0 --lr 0.0003
+```
 
 Taluz enthält optisch identische Runen (`Q=T`, `V=L`). Das CTC-Ziel nutzt dafür
 die kanonischen Zeichen `T` und `L`; ein späterer Wörterbuch-Beam muss die

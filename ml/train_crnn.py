@@ -162,10 +162,65 @@ class SyntheticLines(Dataset):
             selected.append(word)
         return " ".join(selected)
 
+    def encode(self, plain: str) -> str:
+        return "".join(chr(self.offset + ord(ch)) for ch in plain)
+
+    def render_paragraph_cell(self, plain: str, rng: random.Random) -> np.ndarray:
+        """Rendert/binarisiert erst den Absatz und schneidet danach eine Zeile.
+
+        Damit entstehen dieselben abgeschnittenen Ober-/Unterlaengen und
+        dieselbe lokale Sauvola-Schwelle wie beim echten Foto.
+        """
+        size = rng.randint(26, 58)
+        font = self.font(size)
+        count = rng.randint(4, 8)
+        target_i = rng.randrange(1, count - 1)
+        lines = [self.make_text(rng) for _ in range(count)]
+        lines[target_i] = plain
+        encoded = [self.encode(line) for line in lines]
+        pad = max(10, size)
+        width = max(8, math.ceil(max(font.getlength(line) for line in encoded)) + 2 * pad)
+        pitch = size * rng.uniform(1.0, 1.28)
+        baseline0 = pad + size * 1.05
+        height = math.ceil(baseline0 + pitch * (count - 1) + size * 1.1 + pad)
+        page = Image.new("L", (width, height), 255)
+        draw = ImageDraw.Draw(page)
+        for i, line in enumerate(encoded):
+            draw.text(
+                (pad, baseline0 + i * pitch),
+                line,
+                font=font,
+                fill=0,
+                anchor="ls",
+            )
+
+        # Globale Fotostoerungen vor der Binarisierung; Rotation/Perspektive
+        # sind nach dem Browser-Deskew nur noch als kleine Restfehler relevant.
+        page = self.degrade(page, rng, geometry=False)
+        ink = sauvola_ink(np.asarray(page, dtype=np.float32))
+        profile = ink.sum(axis=1)
+        active = np.flatnonzero(profile >= max(1.0, float(profile.max()) * 0.02))
+        if len(active) < count:
+            raise RuntimeError("Synthetischer Absatz enthaelt zu wenig Tinte")
+        top, bottom = int(active[0]), int(active[-1] + 1)
+        step = (bottom - top) / count
+        y0 = max(0, math.floor(top + target_i * step))
+        y1 = min(ink.shape[0], math.ceil(top + (target_i + 1) * step))
+        cell = ink[y0:y1]
+
+        columns = cell.sum(axis=0)
+        used = np.flatnonzero(columns >= max(1.0, float(columns.max()) * 0.03))
+        if len(used):
+            xpad = rng.randint(2, 8)
+            x0 = max(0, int(used[0]) - xpad)
+            x1 = min(cell.shape[1], int(used[-1]) + 1 + xpad)
+            cell = cell[:, x0:x1]
+        return cell
+
     def render(self, plain: str, rng: random.Random) -> Image.Image:
         size = rng.randint(26, 58)
         font = self.font(size)
-        encoded = "".join(chr(self.offset + ord(ch)) for ch in plain)
+        encoded = self.encode(plain)
         pad = max(10, size)
         width = max(8, math.ceil(font.getlength(encoded)) + 2 * pad)
 
@@ -182,9 +237,7 @@ class SyntheticLines(Dataset):
             draw.text((pad, baseline), encoded, font=font, fill=0, anchor="ls")
             for delta in (-pitch, pitch):
                 neighbor = self.make_text(rng)
-                encoded_neighbor = "".join(
-                    chr(self.offset + ord(ch)) for ch in neighbor
-                )
+                encoded_neighbor = self.encode(neighbor)
                 draw.text(
                     (pad, baseline + delta),
                     encoded_neighbor,
@@ -217,26 +270,29 @@ class SyntheticLines(Dataset):
             )
         return img
 
-    def degrade(self, img: Image.Image, rng: random.Random) -> Image.Image:
+    def degrade(
+        self, img: Image.Image, rng: random.Random, geometry: bool = True
+    ) -> Image.Image:
         if not self.augment:
             return img
 
-        strength = rng.uniform(0.0, 0.035)
-        if strength > 0.004:
-            coeffs = perspective_coeffs(img.width, img.height, strength, rng)
-            img = img.transform(
-                img.size,
-                Image.Transform.PERSPECTIVE,
-                coeffs,
+        if geometry:
+            strength = rng.uniform(0.0, 0.035)
+            if strength > 0.004:
+                coeffs = perspective_coeffs(img.width, img.height, strength, rng)
+                img = img.transform(
+                    img.size,
+                    Image.Transform.PERSPECTIVE,
+                    coeffs,
+                    Image.Resampling.BICUBIC,
+                    fillcolor=255,
+                )
+            img = img.rotate(
+                rng.uniform(-3.0, 3.0),
                 Image.Resampling.BICUBIC,
+                expand=True,
                 fillcolor=255,
             )
-        img = img.rotate(
-            rng.uniform(-3.0, 3.0),
-            Image.Resampling.BICUBIC,
-            expand=True,
-            fillcolor=255,
-        )
         if rng.random() < 0.85:
             img = img.filter(ImageFilter.GaussianBlur(rng.uniform(0.0, 1.15)))
         if rng.random() < 0.35:
@@ -272,15 +328,22 @@ class SyntheticLines(Dataset):
         rng = random.Random(self.seed + index * 104729)
         plain = self.make_text(rng)
         label = canonical(plain, self.font_name)
-        img = self.degrade(self.render(plain, rng), rng)
-
-        scale = HEIGHT / max(img.height, 1)
-        width = max(8, round(img.width * scale))
-        img = img.resize((width, HEIGHT), Image.Resampling.BILINEAR)
-        # Der Browser gibt dem Decoder ebenfalls ein binaeres Zeilenbild.
-        # Auf Graustufen zu trainieren und Binaerbilder zu inferieren erzeugt
-        # sonst einen massiven synthetisch→Foto Domain-Gap.
-        arr = sauvola_ink(np.asarray(img, dtype=np.float32))
+        if self.augment and rng.random() < 0.8:
+            arr = self.render_paragraph_cell(plain, rng)
+            scale = HEIGHT / max(arr.shape[0], 1)
+            width = max(8, round(arr.shape[1] * scale))
+            img = Image.fromarray((arr * 255).astype(np.uint8))
+            arr = np.asarray(
+                img.resize((width, HEIGHT), Image.Resampling.NEAREST),
+                dtype=np.float32,
+            ) / 255.0
+        else:
+            img = self.degrade(self.render(plain, rng), rng)
+            scale = HEIGHT / max(img.height, 1)
+            width = max(8, round(img.width * scale))
+            img = img.resize((width, HEIGHT), Image.Resampling.BILINEAR)
+            # Der Browser gibt dem Decoder ebenfalls ein binaeres Zeilenbild.
+            arr = sauvola_ink(np.asarray(img, dtype=np.float32))
         tensor = torch.from_numpy(arr).unsqueeze(0)
         target = torch.tensor([LABEL_OF[ch] for ch in label], dtype=torch.long)
         return tensor, target, label
@@ -417,6 +480,8 @@ def parse_args():
     p.add_argument("--epochs", type=int, default=8)
     p.add_argument("--batch-size", type=int, default=16)
     p.add_argument("--lr", type=float, default=1e-3)
+    p.add_argument("--resume", action="store_true")
+    p.add_argument("--clean-epochs", type=int, default=2)
     p.add_argument("--seed", type=int, default=17)
     p.add_argument("--threads", type=int, default=min(12, os.cpu_count() or 4))
     p.add_argument("--output", type=Path, default=ROOT / "models" / "taluz-crnn.onnx")
@@ -468,6 +533,9 @@ def main():
     )
 
     model = TinyCRNN().to(device)
+    if args.resume and args.checkpoint.exists():
+        model.load_state_dict(torch.load(args.checkpoint, map_location=device))
+        print(f"Checkpoint fortgesetzt: {args.checkpoint}")
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=args.epochs
@@ -481,7 +549,7 @@ def main():
         running = 0.0
         batches = 0
         # Kurzes Curriculum: erst Glyphen/CTC lernen, dann Fotostoerungen.
-        loader = clean_loader if epoch <= min(2, args.epochs // 3) else train_loader
+        loader = clean_loader if epoch <= args.clean_epochs else train_loader
         for images, targets, input_lengths, target_lengths, _ in loader:
             images = images.to(device)
             targets = targets.to(device)
