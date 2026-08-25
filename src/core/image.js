@@ -76,6 +76,40 @@ export function normalizePolarity(bin) {
   return { ...bin, ink, coverage: 1 - bin.coverage, inverted: true };
 }
 
+/** 255 minus Grau -- macht helle Runen auf dunklem Grund zu dunklen Runen. */
+export function invertGray(img) {
+  const data = new Uint8Array(img.data.length);
+  for (let i = 0; i < data.length; i++) data[i] = 255 - img.data[i];
+  return { w: img.w, h: img.h, data };
+}
+
+/**
+ * Sauvola setzt "dunkler als die Umgebung = Tinte". Weisse Runen auf Schwarz
+ * werden damit erst das Papier; ein Binaer-Invert laesst Kantenmuell.
+ * Normaler Brief: Tinte ein paar Prozent → diese Lage behalten.
+ * Verdacht (fast leer oder fast voll): Grau invertieren und neu binarisieren,
+ * dann die Lage mit brief-typischer Deckung nehmen.
+ */
+function coverageScore(coverage) {
+  if (coverage < 0.008 || coverage > 0.42) return -100;
+  return -Math.abs(Math.log(coverage / 0.10));
+}
+
+export function binarizeAutoPolarity(img, opts = {}) {
+  const darkInk = binarize(img, opts);
+  if (darkInk.coverage >= 0.03 && darkInk.coverage <= 0.30) {
+    return { ...darkInk, inverted: false };
+  }
+  const lightInk = binarize(invertGray(img), opts);
+  const flipped = normalizePolarity(darkInk);
+  const lightScore = coverageScore(lightInk.coverage);
+  const flipScore = coverageScore(flipped.coverage);
+  if (lightScore >= flipScore && lightScore > -50) {
+    return { ...lightInk, inverted: true };
+  }
+  return { ...flipped, inverted: !!flipped.inverted };
+}
+
 /**
  * Entfernt isolierte Tintenpixel (weniger als `minNeighbors` Nachbarn im
  * 3x3-Fenster). Handyfotos von Bildschirmen (Moiré) oder verrauschte Fotos

@@ -1,6 +1,6 @@
 // Setzt die Einzelschritte zu einer Uebersetzung zusammen.
 
-import { binarize, despeckle, estimateSkew, normalizePolarity, rotate } from "./image.js";
+import { binarizeAutoPolarity, despeckle, estimateSkew, rotate } from "./image.js";
 import { cropLine, findLines, fontExtent, scaleCandidates } from "./lines.js";
 import { decodeLine, scaleGlyphs } from "./decode.js";
 import { ambiguityMap } from "./atlas.js";
@@ -14,7 +14,7 @@ export function readPage(img, atlas, fontName, opts = {}) {
   const progress = opts.onProgress || (() => {});
   progress("prepare", { w: img.w, h: img.h });
 
-  let bin = normalizePolarity(binarize(img, opts.binarize));
+  let bin = binarizeAutoPolarity(img, opts.binarize);
   const despecklePasses = opts.despeckle ?? 0;
   for (let i = 0; i < despecklePasses; i++) bin = despeckle(bin);
   const skew = opts.deskew === false ? 0 : estimateSkew(bin);

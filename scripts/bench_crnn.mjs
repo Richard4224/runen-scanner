@@ -7,7 +7,7 @@ import path from "node:path";
 import jpeg from "jpeg-js";
 import * as ort from "onnxruntime-node";
 
-import { binarize, estimateSkew, normalizePolarity, rotate } from "../src/core/image.js";
+import { binarizeAutoPolarity, estimateSkew, rotate } from "../src/core/image.js";
 import { cropLine, findLines } from "../src/core/lines.js";
 import { decodeJpegOriented } from "./image_io.mjs";
 
@@ -159,7 +159,7 @@ const small = downscale(raw.data, raw.width, raw.height, maxDim);
 let img = cropSides(cropHeader(gray(small.w, small.h, small.data)));
 
 const tPrep = performance.now();
-let binary = normalizePolarity(binarize(img));
+let binary = binarizeAutoPolarity(img);
 const skew = estimateSkew(binary);
 binary = rotate(binary, skew);
 const boxes = findLines(binary);

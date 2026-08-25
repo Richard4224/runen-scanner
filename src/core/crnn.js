@@ -1,6 +1,6 @@
 // Zeilenweise Inferenz fuer das experimentelle Tiny-CRNN+CTC-Modell.
 
-import { binarize, estimateSkew, normalizePolarity, rotate } from "./image.js";
+import { binarizeAutoPolarity, estimateSkew, rotate } from "./image.js";
 import { cropLine, findLines } from "./lines.js";
 
 const HEIGHT = 48;
@@ -51,7 +51,7 @@ function greedy(logits, dims) {
 export async function readPageCrnn(img, ort, session, opts = {}) {
   const progress = opts.onProgress || (() => {});
   progress("prepare", { w: img.w, h: img.h });
-  let binary = normalizePolarity(binarize(img));
+  let binary = binarizeAutoPolarity(img);
   const skew = estimateSkew(binary);
   binary = rotate(binary, skew);
 
