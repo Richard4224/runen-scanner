@@ -19,9 +19,12 @@ const FONTS = [
 ];
 const fontLabel = (f) => f.replace(/^Phoenix-/, "").replace(/-/g, " ");
 
-const MAX_PROCESS_DIM = 1100;
+const PROCESS_DIM_FAST = 1100;
+const PROCESS_DIM_DETAIL = 2200;
+const DETAIL_STORAGE_KEY = "runen-detail-scan";
 /** Watchdog: wenn der Worker so lange nichts meldet, Abbruch mit Fehler. */
 const WORKER_TIMEOUT_MS = 120_000;
+const WORKER_TIMEOUT_DETAIL_MS = 180_000;
 const FLAVOR = [
   "Die Runen werden befragt …",
   "Zeichen um Zeichen wird enthüllt …",
@@ -44,6 +47,9 @@ const fontSelect = $("font-select");
 const crnnWrap = $("crnn-wrap");
 const crnnToggle = $("crnn-toggle");
 const crnnHint = $("crnn-hint");
+const detailWrap = $("detail-wrap");
+const detailToggle = $("detail-toggle");
+const detailHint = $("detail-hint");
 
 for (const f of FONTS) {
   const opt = document.createElement("option");
@@ -60,10 +66,21 @@ function crnnSelected() {
   return FONTS.includes(fontSelect.value) && crnnToggle.checked;
 }
 
+function detailSelected() {
+  return crnnSelected() && detailToggle.checked;
+}
+
+function processDim() {
+  return detailSelected() ? PROCESS_DIM_DETAIL : PROCESS_DIM_FAST;
+}
+
 function updateEngineChoice() {
   const available = FONTS.includes(fontSelect.value);
+  const crnn = available && crnnToggle.checked;
   crnnWrap.classList.toggle("hidden", !available);
-  crnnHint.classList.toggle("hidden", !available || !crnnToggle.checked);
+  crnnHint.classList.toggle("hidden", !crnn);
+  detailWrap.classList.toggle("hidden", !crnn);
+  detailHint.classList.toggle("hidden", !detailSelected());
 }
 
 let sourceImg = null;    // HTMLImageElement, EXIF-korrigiert
@@ -186,13 +203,14 @@ function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 /** Grobe ETA aus Prozess-Pixeln (iPhone ~ ein Kern). */
 function processSize() {
   const sw = rect.w * dispScale, sh = rect.h * dispScale;
-  const scale = Math.min(1, MAX_PROCESS_DIM / Math.max(sw, sh));
+  const maxDim = processDim();
+  const scale = Math.min(1, maxDim / Math.max(sw, sh));
   const dw = Math.max(1, Math.round(sw * scale));
   const dh = Math.max(1, Math.round(sh * scale));
-  return { dw, dh, px: dw * dh };
+  return { dw, dh, px: dw * dh, maxDim };
 }
 function estimateSeconds(px, auto, crnn = false) {
-  if (crnn) return Math.max(8, Math.round(6 + px / 400_000));
+  if (crnn) return Math.max(5, Math.round(4 + px / 180_000));
   // Empirisch: ~1,2e5 Px/s auf einem Kern mit 5+5 Skalen; Auto × Schriftanzahl.
   const fonts = auto ? FONTS.length : 1;
   return Math.max(3, Math.round((px / 1.2e5) * fonts));
@@ -205,16 +223,18 @@ function formatEta(sec) {
 function updateCropEstimate() {
   const el = $("crop-estimate");
   if (!sourceImg || !el) return;
-  const { dw, dh, px } = processSize();
+  const { dw, dh, px, maxDim } = processSize();
   const auto = fontSelect.value === "__auto__";
   const crnn = crnnSelected();
+  const detail = detailSelected();
   const sec = estimateSeconds(px, auto, crnn);
-  const big = px > 700_000 || Math.max(dw, dh) >= MAX_PROCESS_DIM;
+  const big = px > 700_000 || Math.max(dw, dh) >= maxDim;
   el.textContent =
     `Ausschnitt → ${dw}×${dh} px` +
     (big ? " (groß — Rahmen enger = schneller)" : "") +
     ` · Schätzung ${formatEta(sec)}` +
-    (auto ? " · Auto prüft alle Schriften" : crnn ? " · Schnellmodell" : "");
+    (auto ? " · Auto prüft alle Schriften" : crnn ? " · Schnellmodell" : "") +
+    (detail ? " · hohe Auflösung" : "");
 }
 fontSelect.addEventListener("change", () => {
   updateEngineChoice();
@@ -224,6 +244,15 @@ crnnToggle.addEventListener("change", () => {
   updateEngineChoice();
   updateCropEstimate();
 });
+detailToggle.addEventListener("change", () => {
+  try { localStorage.setItem(DETAIL_STORAGE_KEY, detailToggle.checked ? "1" : "0"); } catch {}
+  updateEngineChoice();
+  updateCropEstimate();
+});
+try {
+  if (localStorage.getItem(DETAIL_STORAGE_KEY) === "1") detailToggle.checked = true;
+} catch {}
+updateEngineChoice();
 
 $("crop-cancel").addEventListener("click", () => { sourceImg = null; showScreen("start"); });
 $("crop-go").addEventListener("click", startDecode);
@@ -251,7 +280,8 @@ function startDecode() {
   const sx = rect.x * dispScale, sy = rect.y * dispScale;
   const sw = rect.w * dispScale, sh = rect.h * dispScale;
 
-  const scale = Math.min(1, MAX_PROCESS_DIM / Math.max(sw, sh));
+  const maxDim = processDim();
+  const scale = Math.min(1, maxDim / Math.max(sw, sh));
   const dw = Math.max(1, Math.round(sw * scale));
   const dh = Math.max(1, Math.round(sh * scale));
 
@@ -265,10 +295,11 @@ function startDecode() {
   const chosen = fontSelect.value;
   const auto = chosen === "__auto__";
   const engine = crnnSelected() ? "crnn" : "classic";
+  const detail = engine === "crnn" && detailToggle.checked;
   const eta = estimateSeconds(dw * dh, auto, engine === "crnn");
 
   showScreen("loading");
-  startLoadingAnim({ dw, dh, eta, auto, font: auto ? null : chosen, engine });
+  startLoadingAnim({ dw, dh, eta, auto, font: auto ? null : chosen, engine, detail });
   runWorker({
     w: dw,
     h: dh,
@@ -281,16 +312,17 @@ function startDecode() {
 }
 
 let loadingTimer = null, elapsedTimer = null, startedAt = 0, watchdogTimer = null;
-let loadMeta = { eta: 0, dw: 0, dh: 0, auto: false };
+let loadMeta = { eta: 0, dw: 0, dh: 0, auto: false, detail: false };
 
-function startLoadingAnim({ dw, dh, eta, auto, font, engine }) {
-  loadMeta = { eta, dw, dh, auto, font, engine };
+function startLoadingAnim({ dw, dh, eta, auto, font, engine, detail = false }) {
+  loadMeta = { eta, dw, dh, auto, font, engine, detail };
   let i = 0;
   $("loading-text").textContent = FLAVOR[0];
   $("loading-detail").textContent =
     `${dw}×${dh} px · Schätzung ${formatEta(eta)}` +
     (auto ? " · alle Schriften" : font ? ` · ${fontLabel(font)}` : "") +
-    (engine === "crnn" ? " · Schnellmodell" : "");
+    (engine === "crnn" ? " · Schnellmodell" : "") +
+    (detail ? " · hohe Auflösung" : "");
   loadingTimer = setInterval(() => {
     i = (i + 1) % FLAVOR.length;
     $("loading-text").textContent = FLAVOR[i];
@@ -316,7 +348,7 @@ function armWatchdog() {
         "Zeitüberschreitung — der Scan hing (oft zu großer Ausschnitt oder schwierige Schrift). " +
         "Rahmen enger setzen und erneut versuchen.",
     });
-  }, WORKER_TIMEOUT_MS);
+  }, loadMeta.detail ? WORKER_TIMEOUT_DETAIL_MS : WORKER_TIMEOUT_MS);
 }
 
 function onWorkerProgress(msg) {

@@ -16,6 +16,18 @@ export function fontExtent(font, emPx) {
 }
 
 /**
+ * Pixel-Schwellen der Zeilensuche sind auf ~1100 px Seitenkante kalibriert.
+ * Groessere Vorlagen wuerden sonst Glyphen-Innenmuster als Textzeilen zaehlen.
+ * Unter 1100 bleibt der Faktor 1, damit der heutige Pfad unveraendert ist.
+ */
+function pageScale(bin) {
+  return Math.max(1, Math.max(bin.w, bin.h) / 1100);
+}
+function scaledPx(n, scale) {
+  return Math.max(1, Math.round(n * scale));
+}
+
+/**
  * Zerlegt das Binaerbild in Zeilen.
  *
  * Saubere Scans: Tinte-Baender mit fast leeren Taelern (klassischer Schwellwert).
@@ -24,7 +36,13 @@ export function fontExtent(font, emPx) {
  * Profil, sonst verschmelzen alle Zeilen zu einer Mega-Zeile.
  */
 export function findLines(bin, opts = {}) {
-  const { minInk = 0.02, minHeight = 8, splitConnected = true } = opts;
+  const scale = pageScale(bin);
+  const { minInk = 0.02, splitConnected = true } = opts;
+  // Ab 1100 px reichen 8 px, um Rauschen zu schlucken. Darueber muessen
+  // Innenstriche grosser Glyphen (Taluz, Runen) mitwachsen. 12 px * Skala
+  // war bei 9 pt zu hoch und hat Zeilen verschmolzen.
+  const minHeight = opts.minHeight ?? (scale > 1.02 ? scaledPx(10, scale) : 8);
+  const minPitch = scaledPx(7, scale);
   const prof = rowProfile(bin);
   let peak = 0;
   for (const v of prof) peak = Math.max(peak, v);
@@ -33,7 +51,7 @@ export function findLines(bin, opts = {}) {
   const classicBands = bandsAbove(prof, Math.max(1, peak * minInk), minHeight);
   const classic = boundLines(bin, classicBands);
   const maxH = classicBands.reduce((m, l) => Math.max(m, l.y1 - l.y0), 0);
-  const pitch = estimateLinePitch(prof);
+  const pitch = estimateLinePitch(prof, scale);
   // Bei großen Phoenix-Runen sind hohe klassische Bänder echte Zeilen.
   // Tal-/Periodensuche würde ihre ornamentierten Querstriche zerschneiden.
   if (!splitConnected && classic.length) return classic;
@@ -44,13 +62,13 @@ export function findLines(bin, opts = {}) {
       ? classic.length >= 3 && classic.length <= 12
       : classic.length === 1;
     if (maySplitClassic
-        && pitch >= 7 && maxH > pitch * 1.55) {
+        && pitch >= minPitch && maxH > pitch * 1.55) {
       return boundLines(bin, splitTallBands(classicBands, pitch));
     }
     return classic;
   }
 
-  return findLinesByValleys(bin, prof, peak, opts);
+  return findLinesByValleys(bin, prof, peak, { ...opts, minHeight, scale });
 }
 
 function rowProfile(bin) {
@@ -83,12 +101,15 @@ function bandsAbove(prof, thr, minHeight) {
  * Anschliessend kurze Fragmente zusammenkleben.
  */
 function findLinesByValleys(bin, prof, peak, opts = {}) {
+  const scale = opts.scale ?? pageScale(bin);
   const {
-    minHeight = 8,
-    smooth = 3,
+    minHeight = scaledPx(8, scale),
     maxRel = 0.8,
     minPeakFrac = 0.18,
   } = opts;
+  const smooth = opts.smooth ?? scaledPx(3, scale);
+  const neighSpan = scaledPx(40, scale);
+  const minSplitGap = scaledPx(2, scale);
   const h = prof.length;
   const sm = new Float64Array(h);
   for (let y = 0; y < h; y++) {
@@ -104,8 +125,8 @@ function findLinesByValleys(bin, prof, peak, opts = {}) {
   for (let y = smooth; y < h - smooth; y++) {
     if (!(sm[y] <= sm[y - 1] && sm[y] <= sm[y + 1])) continue;
     let left = 0, right = 0;
-    for (let yy = Math.max(0, y - 40); yy < y; yy++) left = Math.max(left, sm[yy]);
-    for (let yy = y + 1; yy <= Math.min(h - 1, y + 40); yy++) right = Math.max(right, sm[yy]);
+    for (let yy = Math.max(0, y - neighSpan); yy < y; yy++) left = Math.max(left, sm[yy]);
+    for (let yy = y + 1; yy <= Math.min(h - 1, y + neighSpan); yy++) right = Math.max(right, sm[yy]);
     const neigh = Math.min(left, right);
     if (neigh < peak * minPeakFrac) continue;
     if (sm[y] / neigh <= maxRel && sm[y] / peak < 0.55) splits.push(y);
@@ -114,7 +135,7 @@ function findLinesByValleys(bin, prof, peak, opts = {}) {
 
   const uniq = [];
   for (const s of splits) {
-    if (!uniq.length || s - uniq[uniq.length - 1] > 2) uniq.push(s);
+    if (!uniq.length || s - uniq[uniq.length - 1] > minSplitGap) uniq.push(s);
   }
 
   let lines = [];
@@ -127,40 +148,41 @@ function findLinesByValleys(bin, prof, peak, opts = {}) {
     lines.push({ y0, y1 });
   }
 
-  lines = mergeThinBands(lines);
+  lines = mergeThinBands(lines, scale);
 
   if (lines.length >= 3) {
     const hs = lines.map((l) => l.y1 - l.y0).sort((a, b) => a - b);
-    const med = hs[hs.length >> 1] || 20;
+    const med = hs[hs.length >> 1] || scaledPx(20, scale);
     lines = lines.filter((l) => l.y1 - l.y0 <= med * 2.4);
   }
 
   // Bei hohen/verbundenen Schriften (Taluz) beruehren sich benachbarte
   // Textzeilen. Die Tal-Suche findet dann nur ganze Absaetze. Der periodische
   // Zeilenabstand bleibt aber in der Ableitung des Profils sichtbar.
-  const pitch = estimateLinePitch(prof);
+  const pitch = estimateLinePitch(prof, scale);
   const maySplitValleys = opts.splitConnected !== false
     ? lines.length >= 3 && lines.length <= 12
     : lines.length === 1;
-  if (maySplitValleys && pitch >= 7) {
+  if (maySplitValleys && pitch >= scaledPx(7, scale)) {
     lines = splitTallBands(lines, pitch);
   }
 
   return boundLines(bin, lines);
 }
 
-/** Klebt uebersplittene Kurzbaender (Luecke <= 3 px) zu einer Zeile. */
-function mergeThinBands(lines) {
+/** Klebt uebersplittene Kurzbaender (Luecke <= 3 px bei 1100) zu einer Zeile. */
+function mergeThinBands(lines, scale = 1) {
   if (lines.length < 2) return lines;
   const heights = lines.map((l) => l.y1 - l.y0).sort((a, b) => a - b);
-  const target = heights[heights.length >> 1] || 20;
+  const target = heights[heights.length >> 1] || scaledPx(20, scale);
+  const maxGap = scaledPx(3, scale);
   const out = [{ ...lines[0] }];
   for (let i = 1; i < lines.length; i++) {
     const prev = out[out.length - 1];
     const cur = lines[i];
     const gap = cur.y0 - prev.y1;
     const mergedH = cur.y1 - prev.y0;
-    if (gap <= 3 && mergedH <= target * 1.65) {
+    if (gap <= maxGap && mergedH <= target * 1.65) {
       prev.y1 = cur.y1;
     } else {
       out.push({ ...cur });
@@ -170,13 +192,16 @@ function mergeThinBands(lines) {
 }
 
 /** Staerkster periodischer Abstand im Hochpass-Zeilenprofil. */
-function estimateLinePitch(prof) {
+function estimateLinePitch(prof, scale = 1) {
   if (prof.length < 30) return 0;
   const diff = new Float64Array(prof.length);
   for (let y = 1; y < prof.length; y++) diff[y] = prof[y] - prof[y - 1];
   // Unter 9 px entstehen bei 1100px-Briefen eher Glyphen-Innenmuster als
-  // echte Druckzeilen; diese Peaks fuehren sonst zu massiver Ueberteilung.
-  const lo = 9, hi = Math.min(80, Math.floor(prof.length / 3));
+  // echte Druckzeilen; bei groesserer Vorlage skaliert die Grenze etwas
+  // staerker mit, damit halbe Zeilenhoehen nicht als Periode gewinnen.
+  const lo = scale > 1.02 ? scaledPx(12, scale) : scaledPx(9, scale);
+  const hi = Math.min(scaledPx(80, scale), Math.floor(prof.length / 3));
+  if (hi <= lo + 1) return 0;
   const scores = new Float64Array(hi + 1);
   for (let lag = lo; lag <= hi; lag++) {
     let s = 0, n = 0;
