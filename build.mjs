@@ -211,6 +211,14 @@ fs.copyFileSync(path.join(src, "_headers"), path.join(dist, "_headers"));
 fs.copyFileSync(ortWasmPath, path.join(dist, "ort-wasm-simd-threaded.wasm"));
 fs.copyFileSync(ortMjsPath, path.join(dist, "ort-wasm-simd-threaded.mjs"));
 
+const eggSound = path.join(here, "sound", "among-us.mp3");
+function copyEggSound(destDir) {
+  const soundDir = path.join(destDir, "sound");
+  fs.mkdirSync(soundDir, { recursive: true });
+  fs.copyFileSync(eggSound, path.join(soundDir, "among-us.mp3"));
+}
+copyEggSound(dist);
+
 const cloudflarePath = path.join(distCloudflare, "index.html");
 fs.writeFileSync(cloudflarePath, renderHtml(cloudflareWorkerCode));
 fs.copyFileSync(path.join(src, "_headers"), path.join(distCloudflare, "_headers"));
@@ -219,6 +227,7 @@ fs.copyFileSync(ortMjsPath, path.join(distCloudflare, "ort-wasm-simd-threaded.mj
 for (const file of Object.values(crnnModelFiles)) {
   fs.copyFileSync(path.join(here, "models", file), path.join(distCloudflare, file));
 }
+copyEggSound(distCloudflare);
 
 const kb = (fs.statSync(outPath).size / 1024).toFixed(0);
 const cloudflareKb = (fs.statSync(cloudflarePath).size / 1024).toFixed(0);

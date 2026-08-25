@@ -25,6 +25,7 @@ const DETAIL_STORAGE_KEY = "runen-detail-scan";
 /** Watchdog: wenn der Worker so lange nichts meldet, Abbruch mit Fehler. */
 const WORKER_TIMEOUT_MS = 120_000;
 const WORKER_TIMEOUT_DETAIL_MS = 180_000;
+const AMONG_US_RE = /\bAMONG\s*US\b/;
 const FLAVOR = [
   "Die Runen werden befragt …",
   "Zeichen um Zeichen wird enthüllt …",
@@ -255,17 +256,26 @@ try {
 updateEngineChoice();
 
 $("crop-cancel").addEventListener("click", () => { sourceImg = null; showScreen("start"); });
-$("crop-go").addEventListener("click", startDecode);
+$("crop-go").addEventListener("click", () => {
+  armAmongUsAudio();
+  startDecode();
+});
 $("result-again").addEventListener("click", () => {
+  stopAmongUsAudio();
   stopDictCorrection();
   sourceImg = null;
   showScreen("start");
 });
 $("result-retry").addEventListener("click", () => {
+  stopAmongUsAudio();
   stopDictCorrection();
   showScreen("crop");
 });
-$("loading-cancel").addEventListener("click", () => { stopWorker(); showScreen("crop"); });
+$("loading-cancel").addEventListener("click", () => {
+  stopAmongUsAudio();
+  stopWorker();
+  showScreen("crop");
+});
 
 // -- Bild vorbereiten & an den Worker schicken --
 function gray(w, h, rgba) {
@@ -577,6 +587,7 @@ function showResult(res) {
 
   showScreen("result");
   renderResultText();
+  maybePlayAmongUs(res);
 }
 
 function renderResultText() {
@@ -596,3 +607,35 @@ dictCancel.addEventListener("click", () => {
   dictToggle.checked = false;
   stopDictCorrection("Wörterbuch abgebrochen – Rohtext bleibt sichtbar.");
 });
+
+let amongUsAudio = null;
+function amongUsSrc() {
+  try { return new URL("sound/among-us.mp3", location.href).href; }
+  catch { return "sound/among-us.mp3"; }
+}
+function armAmongUsAudio() {
+  if (amongUsAudio) return;
+  amongUsAudio = new Audio(amongUsSrc());
+  amongUsAudio.preload = "auto";
+  amongUsAudio.volume = 0.85;
+  amongUsAudio.load();
+}
+function stopAmongUsAudio() {
+  if (!amongUsAudio) return;
+  amongUsAudio.pause();
+  amongUsAudio.currentTime = 0;
+}
+function maybePlayAmongUs(res) {
+  if (!res || !res.ok || res.empty || !res.chars) {
+    stopAmongUsAudio();
+    return;
+  }
+  const text = res.chars.map((c) => c.ch).join("").toUpperCase().replace(/[^A-Z]+/g, " ");
+  if (!AMONG_US_RE.test(text)) {
+    stopAmongUsAudio();
+    return;
+  }
+  armAmongUsAudio();
+  stopAmongUsAudio();
+  amongUsAudio.play().catch(() => {});
+}
