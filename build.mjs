@@ -190,12 +190,19 @@ const dictWorkerCode = await bundle("dict-worker.js");
 
 // 3. Offline-Einzeldatei und schlanken Cloudflare-Build erzeugen.
 const css = fs.readFileSync(path.join(src, "style.css"), "utf8");
-function renderHtml(worker) {
-  let html = fs.readFileSync(path.join(src, "index.html"), "utf8");
-  html = html.replace(
+const privacyText = fs.readFileSync(path.join(src, "datenschutz-text.html"), "utf8");
+function withPrivacy(html) {
+  return html.replace("<!--PRIVACY-->", privacyText);
+}
+function inlineCss(html) {
+  return html.replace(
     '<link rel="stylesheet" href="style.css" />',
     `<style>\n${css}\n</style>`,
   );
+}
+function renderHtml(worker) {
+  let html = withPrivacy(fs.readFileSync(path.join(src, "index.html"), "utf8"));
+  html = inlineCss(html);
   return html.replace(
     '<script type="module" src="app.js"></script>',
     `<script>\n` +
@@ -204,9 +211,13 @@ function renderHtml(worker) {
     `</script>\n<script>\n${appCode}\n</script>`,
   );
 }
+function renderPrivacyPage() {
+  return inlineCss(withPrivacy(fs.readFileSync(path.join(src, "datenschutz.html"), "utf8")));
+}
 
 const outPath = path.join(dist, "index.html");
 fs.writeFileSync(outPath, renderHtml(workerCode));
+fs.writeFileSync(path.join(dist, "datenschutz.html"), renderPrivacyPage());
 fs.copyFileSync(path.join(src, "_headers"), path.join(dist, "_headers"));
 fs.copyFileSync(ortWasmPath, path.join(dist, "ort-wasm-simd-threaded.wasm"));
 fs.copyFileSync(ortMjsPath, path.join(dist, "ort-wasm-simd-threaded.mjs"));
@@ -221,6 +232,7 @@ copyEggSound(dist);
 
 const cloudflarePath = path.join(distCloudflare, "index.html");
 fs.writeFileSync(cloudflarePath, renderHtml(cloudflareWorkerCode));
+fs.writeFileSync(path.join(distCloudflare, "datenschutz.html"), renderPrivacyPage());
 fs.copyFileSync(path.join(src, "_headers"), path.join(distCloudflare, "_headers"));
 fs.copyFileSync(ortWasmPath, path.join(distCloudflare, "ort-wasm-simd-threaded.wasm"));
 fs.copyFileSync(ortMjsPath, path.join(distCloudflare, "ort-wasm-simd-threaded.mjs"));

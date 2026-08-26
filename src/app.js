@@ -35,10 +35,21 @@ const FLAVOR = [
 ];
 
 const $ = (id) => document.getElementById(id);
-const screens = ["start", "crop", "loading", "result"];
+const screens = ["start", "crop", "loading", "result", "privacy"];
 function showScreen(name) {
   for (const s of screens) $(`screen-${s}`).classList.toggle("active", s === name);
+  if (name !== "privacy" && location.hash === "#datenschutz") {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
 }
+
+$("privacy-link").addEventListener("click", (e) => {
+  e.preventDefault();
+  showScreen("privacy");
+  history.replaceState(null, "", "#datenschutz");
+});
+$("privacy-back").addEventListener("click", () => showScreen("start"));
+if (location.hash === "#datenschutz") showScreen("privacy");
 
 const fileInput = $("file-input");
 const cropCanvas = $("crop-canvas");
