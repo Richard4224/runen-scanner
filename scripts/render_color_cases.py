@@ -47,7 +47,7 @@ def lum(rgb: tuple[int, int, int]) -> int:
 
 
 def render(font_name: str, paper: tuple[int, int, int], ink: tuple[int, int, int], margin=False):
-    path = ROOT / f"{font_name}.ttf"
+    path = ROOT / "fonts" / f"{font_name}.ttf"
     offset, encoding = charmap(str(path))
     size = 36
     font = ImageFont.truetype(str(path), size, encoding=encoding)

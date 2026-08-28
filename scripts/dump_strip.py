@@ -34,7 +34,7 @@ def normalised(line, bank) -> np.ndarray:
     return (strip > 0.35).astype(np.uint8) * 255
 
 
-fonts = discover(ROOT)
+fonts = discover(ROOT / "fonts")
 bank = TemplateBank(fonts["Runen"])
 print(f"line_extent = {bank.line_extent:.3f} em")
 

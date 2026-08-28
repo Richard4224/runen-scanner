@@ -15,3 +15,9 @@ src/generated-crnn.js
 src/sound/
 .wrangler/
 dist-cloudflare/
+fonts/
+*.ttf
+*.otf
+*.pdf
+img/
+test material/

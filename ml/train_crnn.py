@@ -131,7 +131,11 @@ class SyntheticLines(Dataset):
         augment: bool,
     ):
         self.font_name = font_name
-        self.font_path = ROOT / f"{font_name}.ttf"
+        self.font_path = ROOT / "fonts" / f"{font_name}.ttf"
+        if not self.font_path.is_file():
+            raise FileNotFoundError(
+                f"Schrift fehlt: {self.font_path}. Phoenix-TTFs nach fonts/ legen (nicht im Repo)."
+            )
         self.words = words
         self.count = count
         self.seed = seed

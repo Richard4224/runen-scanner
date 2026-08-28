@@ -66,7 +66,7 @@ def report(label: str, ink: np.ndarray, bank: TemplateBank, truth: list[str]) ->
         print(f"  Mittel: {total / len(lines):.1%}   ({time.time() - t0:.1f}s)")
 
 
-fonts = discover(ROOT)
+fonts = discover(ROOT / "fonts")
 bank = TemplateBank(fonts["Runen"])
 
 # 1. Sauber gesetzt -- der Grundtest.

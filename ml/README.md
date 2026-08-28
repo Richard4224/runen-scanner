@@ -17,7 +17,8 @@ npm install
 .\.venv\Scripts\python ml\train_crnn.py --font Phoenix-Taluz
 ```
 
-Das Training nutzt ausschließlich synthetische Zeilen aus dem TTF. Perspektive,
+Das Training nutzt ausschließlich synthetische Zeilen aus dem TTF in `fonts/`
+(Phoenix-Schriften liegen nicht im Repo). Perspektive,
 Unschärfe, Schatten, Rauschen, Skalierung und JPEG-Artefakte werden zufällig
 erzeugt. Der Fotopfad rendert außerdem vollständige, eng gesetzte Absätze,
 binarisiert sie als Ganzes und schneidet erst danach die Zielzeile aus. Das

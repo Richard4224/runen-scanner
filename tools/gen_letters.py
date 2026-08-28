@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from gen_atlas import charmap
 from gen_testdata import render
 
-FONT_DIR = os.path.join(os.path.dirname(__file__), "..")
+FONT_DIR = os.path.join(os.path.dirname(__file__), "..", "fonts")
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "test", "chars")
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 FONTS = [

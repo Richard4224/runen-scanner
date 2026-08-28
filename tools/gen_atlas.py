@@ -23,7 +23,7 @@ import os
 from fontTools.ttLib import TTFont
 from PIL import Image, ImageDraw, ImageFont
 
-FONT_DIR = os.path.join(os.path.dirname(__file__), "..")
+FONT_DIR = os.path.join(os.path.dirname(__file__), "..", "fonts")
 OUT = os.path.join(os.path.dirname(__file__), "..", "src", "atlas.json")
 
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

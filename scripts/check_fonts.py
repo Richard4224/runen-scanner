@@ -1,7 +1,7 @@
 """Alle Schriften einlesen und je ein Uebersichtsblatt nach build/ schreiben.
 
-Damit laesst sich pruefen, ob die gerenderten Referenzglyphen mit der
-Runen-Karte aus runen_magie_A6.pdf uebereinstimmen.
+Damit laesst sich pruefen, ob die gerenderten Referenzglyphen zu den
+Phoenix-TTFs in fonts/ passen.
 """
 
 import sys
@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "build"
 OUT.mkdir(exist_ok=True)
 
-fonts = discover(ROOT)
+fonts = discover(ROOT / "fonts")
 for key, font in fonts.items():
     letters = font.alphabet()
     missing = [c for c in "abcdefghijklmnopqrstuvwxyz" if font.glyph(c) is None or font.glyph(c).empty]

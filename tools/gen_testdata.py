@@ -16,7 +16,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from gen_atlas import charmap
 
-FONT_DIR = os.path.join(os.path.dirname(__file__), "..")
+FONT_DIR = os.path.join(os.path.dirname(__file__), "..", "fonts")
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "test", "data")
 
 SAETZE = [
