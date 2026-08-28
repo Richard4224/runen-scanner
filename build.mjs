@@ -191,8 +191,9 @@ const dictWorkerCode = await bundle("dict-worker.js");
 // 3. Offline-Einzeldatei und schlanken Cloudflare-Build erzeugen.
 const css = fs.readFileSync(path.join(src, "style.css"), "utf8");
 const privacyText = fs.readFileSync(path.join(src, "datenschutz-text.html"), "utf8");
-function withPrivacy(html) {
-  return html.replace("<!--PRIVACY-->", privacyText);
+const imprintText = fs.readFileSync(path.join(src, "impressum-text.html"), "utf8");
+function withLegal(html) {
+  return html.replace("<!--PRIVACY-->", privacyText).replace("<!--IMPRINT-->", imprintText);
 }
 function inlineCss(html) {
   return html.replace(
@@ -201,7 +202,7 @@ function inlineCss(html) {
   );
 }
 function renderHtml(worker) {
-  let html = withPrivacy(fs.readFileSync(path.join(src, "index.html"), "utf8"));
+  let html = withLegal(fs.readFileSync(path.join(src, "index.html"), "utf8"));
   html = inlineCss(html);
   return html.replace(
     '<script type="module" src="app.js"></script>',
@@ -211,13 +212,14 @@ function renderHtml(worker) {
     `</script>\n<script>\n${appCode}\n</script>`,
   );
 }
-function renderPrivacyPage() {
-  return inlineCss(withPrivacy(fs.readFileSync(path.join(src, "datenschutz.html"), "utf8")));
+function renderLegalPage(file) {
+  return inlineCss(withLegal(fs.readFileSync(path.join(src, file), "utf8")));
 }
 
 const outPath = path.join(dist, "index.html");
 fs.writeFileSync(outPath, renderHtml(workerCode));
-fs.writeFileSync(path.join(dist, "datenschutz.html"), renderPrivacyPage());
+fs.writeFileSync(path.join(dist, "datenschutz.html"), renderLegalPage("datenschutz.html"));
+fs.writeFileSync(path.join(dist, "impressum.html"), renderLegalPage("impressum.html"));
 fs.copyFileSync(path.join(src, "_headers"), path.join(dist, "_headers"));
 fs.copyFileSync(ortWasmPath, path.join(dist, "ort-wasm-simd-threaded.wasm"));
 fs.copyFileSync(ortMjsPath, path.join(dist, "ort-wasm-simd-threaded.mjs"));
@@ -232,7 +234,8 @@ copyEggSound(dist);
 
 const cloudflarePath = path.join(distCloudflare, "index.html");
 fs.writeFileSync(cloudflarePath, renderHtml(cloudflareWorkerCode));
-fs.writeFileSync(path.join(distCloudflare, "datenschutz.html"), renderPrivacyPage());
+fs.writeFileSync(path.join(distCloudflare, "datenschutz.html"), renderLegalPage("datenschutz.html"));
+fs.writeFileSync(path.join(distCloudflare, "impressum.html"), renderLegalPage("impressum.html"));
 fs.copyFileSync(path.join(src, "_headers"), path.join(distCloudflare, "_headers"));
 fs.copyFileSync(ortWasmPath, path.join(distCloudflare, "ort-wasm-simd-threaded.wasm"));
 fs.copyFileSync(ortMjsPath, path.join(distCloudflare, "ort-wasm-simd-threaded.mjs"));

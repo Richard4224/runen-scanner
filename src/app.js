@@ -35,21 +35,36 @@ const FLAVOR = [
 ];
 
 const $ = (id) => document.getElementById(id);
-const screens = ["start", "crop", "loading", "result", "privacy"];
+const screens = ["start", "crop", "loading", "result", "privacy", "imprint"];
+const LEGAL_HASH = { privacy: "#datenschutz", imprint: "#impressum" };
 function showScreen(name) {
   for (const s of screens) $(`screen-${s}`).classList.toggle("active", s === name);
-  if (name !== "privacy" && location.hash === "#datenschutz") {
+  const hash = LEGAL_HASH[name];
+  if (hash) {
+    if (location.hash !== hash) history.replaceState(null, "", hash);
+  } else if (location.hash === "#datenschutz" || location.hash === "#impressum") {
     history.replaceState(null, "", location.pathname + location.search);
   }
 }
 
-$("privacy-link").addEventListener("click", (e) => {
-  e.preventDefault();
-  showScreen("privacy");
-  history.replaceState(null, "", "#datenschutz");
-});
+function openLegal(screen) {
+  return (e) => {
+    e.preventDefault();
+    showScreen(screen);
+  };
+}
+$("privacy-link").addEventListener("click", openLegal("privacy"));
+$("imprint-link").addEventListener("click", openLegal("imprint"));
 $("privacy-back").addEventListener("click", () => showScreen("start"));
+$("imprint-back").addEventListener("click", () => showScreen("start"));
+$("screen-privacy").addEventListener("click", (e) => {
+  const a = e.target.closest('a[href="impressum.html"]');
+  if (!a) return;
+  e.preventDefault();
+  showScreen("imprint");
+});
 if (location.hash === "#datenschutz") showScreen("privacy");
+else if (location.hash === "#impressum") showScreen("imprint");
 
 const fileInput = $("file-input");
 const cropCanvas = $("crop-canvas");

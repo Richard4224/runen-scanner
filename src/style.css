@@ -255,6 +255,11 @@ select {
   text-underline-offset: 0.18em;
 }
 #screen-start .legal-link { opacity: 0.75; }
+.legal-nav {
+  display: flex;
+  gap: 1.1rem;
+  justify-content: center;
+}
 .legal-title {
   margin: 0;
   color: var(--accent);
@@ -284,4 +289,5 @@ select {
   font-size: 0.85em;
   color: var(--ink);
 }
-#screen-privacy .ghost { align-self: flex-start; }
+#screen-privacy .ghost,
+#screen-imprint .ghost { align-self: flex-start; }
