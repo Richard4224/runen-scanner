@@ -13,5 +13,10 @@
   <!--IMPRINT-->
   <p><a class="legal-link" href="index.html">Zurück zum Übersetzer</a></p>
 </main>
+<script>
+if (new URLSearchParams(location.search).has("gesendet")) {
+  document.getElementById("contact-sent")?.classList.remove("hidden");
+}
+</script>
 </body>
 </html>

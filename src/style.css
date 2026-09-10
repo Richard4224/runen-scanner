@@ -291,3 +291,41 @@ select {
 }
 #screen-privacy .ghost,
 #screen-imprint .ghost { align-self: flex-start; }
+
+.contact-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0.2rem 0 1rem;
+}
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form textarea {
+  font: inherit;
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--accent-dim);
+  border-radius: 0.5rem;
+  padding: 0.7rem;
+  width: 100%;
+}
+.contact-form textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+.contact-form button { align-self: flex-start; }
+.contact-form .honey {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.contact-sent {
+  background: var(--panel);
+  border: 1px solid var(--ok);
+  color: var(--ink);
+  border-radius: 0.5rem;
+  padding: 0.8rem 1rem;
+}
