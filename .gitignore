@@ -21,3 +21,6 @@ fonts/
 *.pdf
 img/
 test material/
+
+sound/among_us_*.mp3
+dist/sound/
