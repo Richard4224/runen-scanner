@@ -195,11 +195,13 @@ const imprintText = fs.readFileSync(path.join(src, "impressum-text.html"), "utf8
 function withLegal(html) {
   return html.replace("<!--PRIVACY-->", privacyText).replace("<!--IMPRINT-->", imprintText);
 }
+// Browser-Icon als data:-URL, damit auch die Offline-Datei es ohne Server zeigt.
+const faviconSvg = fs.readFileSync(path.join(src, "favicon.svg"), "utf8").replace(/\s*\n\s*/g, "");
+const faviconUrl = `data:image/svg+xml,${encodeURIComponent(faviconSvg)}`;
 function inlineCss(html) {
-  return html.replace(
-    '<link rel="stylesheet" href="style.css" />',
-    `<style>\n${css}\n</style>`,
-  );
+  return html
+    .replace('<link rel="stylesheet" href="style.css" />', `<style>\n${css}\n</style>`)
+    .replace('href="favicon.svg"', `href="${faviconUrl}"`);
 }
 function renderHtml(worker) {
   let html = withLegal(fs.readFileSync(path.join(src, "index.html"), "utf8"));
