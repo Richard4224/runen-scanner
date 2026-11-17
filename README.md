@@ -29,9 +29,9 @@ npm run build
 - `dist/index.html` — eine Offline-Datei (Safari / AirDrop)
 - `dist-cloudflare/` — schlanker Build für Cloudflare Pages
 
-```powershell
-npm run deploy:cloudflare
-```
+## Deploy
+
+Cloudflare Pages ist mit diesem Repo verbunden: Jeder Push auf `main` baut die Seite neu (`npm run build`, Ausgabe `dist-cloudflare/`) und stellt sie live. Andere Branches werden nicht gebaut.
 
 ## Training
 
