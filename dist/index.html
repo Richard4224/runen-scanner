@@ -378,9 +378,9 @@ select {
     </label>
     <label id="crnn-wrap" class="switch-row hidden">
       <input id="crnn-toggle" type="checkbox" checked />
-      <span>Schnellmodell verwenden (experimentell)</span>
+      <span>Schnellmodell verwenden</span>
     </label>
-    <p id="crnn-hint" class="hint hidden">Sehr schnell, aber derzeit noch fehleranfällig. Der erste Start lädt die eingebettete Laufzeit.</p>
+    <p id="crnn-hint" class="hint hidden">Sehr schnell. Der erste Start lädt die eingebettete Laufzeit.</p>
     <label id="detail-wrap" class="switch-row hidden">
       <input id="detail-toggle" type="checkbox" />
       <span>Mehr Details (länger, oft genauer)</span>
@@ -1086,7 +1086,7 @@ globalThis.__DICT_WORKER_SRC__ = "(() => {\n  // src/generated-dict.js\n  var DI
     }
     const sec = res.ms != null ? `  \xB7  ${(res.ms / 1e3).toFixed(1)} s` : "";
     const engine = res.engine === "crnn";
-    metaEl.textContent = `Sprache: ${fontLabel(res.font)}` + (engine ? "  \xB7  Schnellmodell (experimentell)" : `  \xB7  Sicherheit: ${Math.round(res.confidence * 100)}%`) + (res.lines ? `  \xB7  ${res.lines} Zeilen` : "") + sec;
+    metaEl.textContent = `Sprache: ${fontLabel(res.font)}` + (engine ? "  \xB7  Schnellmodell" : `  \xB7  Sicherheit: ${Math.round(res.confidence * 100)}%`) + (res.lines ? `  \xB7  ${res.lines} Zeilen` : "") + sec;
     dictToggle.checked = res.engine !== "crnn";
     dictToggleWrap.classList.toggle("hidden", res.engine === "crnn");
     const seen = /* @__PURE__ */ new Map();

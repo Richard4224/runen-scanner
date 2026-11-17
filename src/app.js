@@ -600,7 +600,7 @@ function showResult(res) {
   const engine = res.engine === "crnn";
   metaEl.textContent =
     `Sprache: ${fontLabel(res.font)}` +
-    (engine ? "  ·  Schnellmodell (experimentell)" : `  ·  Sicherheit: ${Math.round(res.confidence * 100)}%`) +
+    (engine ? "  ·  Schnellmodell" :`  ·  Sicherheit: ${Math.round(res.confidence * 100)}%`) +
     (res.lines ? `  ·  ${res.lines} Zeilen` : "") + sec;
   dictToggle.checked = res.engine !== "crnn";
   dictToggleWrap.classList.toggle("hidden", res.engine === "crnn");
