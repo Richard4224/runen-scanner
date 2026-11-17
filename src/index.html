@@ -17,6 +17,7 @@
     <div class="sigil">◈</div>
     <p id="iphone-warn">iPhone öffnet diese Datei nur als Vorschau — die App startet nicht (kein Safari). Bitte die Datei auf einem Android-Handy oder Computer in Chrome öffnen, oder Benedikt um einen Safari-Link bitten.</p>
     <p>Foto eines Runenbriefs aufnehmen oder aus der Mediathek wählen.</p>
+    <p id="photo-tips">Tipp: Das Blatt möglichst gerade fotografieren, nicht zur Seite gekippt, sonst findet die Erkennung die Zeilen nicht. Und nah ran: Je größer die Runen im Bild, desto besser.</p>
     <p id="safari-hint" class="hint hidden">Bitte zuerst in Safari öffnen (Teilen → In Safari öffnen). In WhatsApp bleibt die Seite oft schwarz.</p>
     <p id="start-error" class="hint hidden"></p>
     <label id="pick-btn" class="primary" for="file-input">Runenbrief erfassen</label>
@@ -43,13 +44,12 @@
       Sprache der Runen
       <select id="font-select"></select>
     </label>
-    <label id="crnn-wrap" class="switch-row hidden">
-      <input id="crnn-toggle" type="checkbox" checked />
-      <span>Schnellmodell verwenden</span>
+    <label id="legacy-wrap" class="switch-row hidden">
+      <input id="legacy-toggle" type="checkbox" />
+      <span>Legacy-Modus (alter Erkenner)</span>
     </label>
-    <p id="crnn-hint" class="hint hidden">Sehr schnell. Der erste Start lädt die eingebettete Laufzeit.</p>
     <label id="detail-wrap" class="switch-row hidden">
-      <input id="detail-toggle" type="checkbox" />
+      <input id="detail-toggle" type="checkbox" checked />
       <span>Mehr Details (länger, oft genauer)</span>
     </label>
     <p id="detail-hint" class="hint hidden">Rechnet mit höherer Auflösung. Dauert etwa dreimal so lange, hilft vor allem bei kleiner Schrift.</p>

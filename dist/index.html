@@ -124,6 +124,7 @@ button:disabled { opacity: 0.45; cursor: default; }
   font-weight: 600;
   text-align: center;
 }
+#photo-tips { font-size: 0.9rem; }
 #screen-start .hint {
   color: #e3b8ac;
   max-width: 26em;
@@ -350,6 +351,7 @@ select {
     <div class="sigil">◈</div>
     <p id="iphone-warn">iPhone öffnet diese Datei nur als Vorschau — die App startet nicht (kein Safari). Bitte die Datei auf einem Android-Handy oder Computer in Chrome öffnen, oder Benedikt um einen Safari-Link bitten.</p>
     <p>Foto eines Runenbriefs aufnehmen oder aus der Mediathek wählen.</p>
+    <p id="photo-tips">Tipp: Das Blatt möglichst gerade fotografieren, nicht zur Seite gekippt, sonst findet die Erkennung die Zeilen nicht. Und nah ran: Je größer die Runen im Bild, desto besser.</p>
     <p id="safari-hint" class="hint hidden">Bitte zuerst in Safari öffnen (Teilen → In Safari öffnen). In WhatsApp bleibt die Seite oft schwarz.</p>
     <p id="start-error" class="hint hidden"></p>
     <label id="pick-btn" class="primary" for="file-input">Runenbrief erfassen</label>
@@ -376,13 +378,12 @@ select {
       Sprache der Runen
       <select id="font-select"></select>
     </label>
-    <label id="crnn-wrap" class="switch-row hidden">
-      <input id="crnn-toggle" type="checkbox" checked />
-      <span>Schnellmodell verwenden</span>
+    <label id="legacy-wrap" class="switch-row hidden">
+      <input id="legacy-toggle" type="checkbox" />
+      <span>Legacy-Modus (alter Erkenner)</span>
     </label>
-    <p id="crnn-hint" class="hint hidden">Sehr schnell. Der erste Start lädt die eingebettete Laufzeit.</p>
     <label id="detail-wrap" class="switch-row hidden">
-      <input id="detail-toggle" type="checkbox" />
+      <input id="detail-toggle" type="checkbox" checked />
       <span>Mehr Details (länger, oft genauer)</span>
     </label>
     <p id="detail-hint" class="hint hidden">Rechnet mit höherer Auflösung. Dauert etwa dreimal so lange, hilft vor allem bei kleiner Schrift.</p>
@@ -581,9 +582,8 @@ globalThis.__DICT_WORKER_SRC__ = "(() => {\n  // src/generated-dict.js\n  var DI
   var cropWrap = $("crop-wrap");
   var cropRectEl = $("crop-rect");
   var fontSelect = $("font-select");
-  var crnnWrap = $("crnn-wrap");
-  var crnnToggle = $("crnn-toggle");
-  var crnnHint = $("crnn-hint");
+  var legacyWrap = $("legacy-wrap");
+  var legacyToggle = $("legacy-toggle");
   var detailWrap = $("detail-wrap");
   var detailToggle = $("detail-toggle");
   var detailHint = $("detail-hint");
@@ -595,10 +595,10 @@ globalThis.__DICT_WORKER_SRC__ = "(() => {\n  // src/generated-dict.js\n  var DI
   }
   var autoOpt = document.createElement("option");
   autoOpt.value = "__auto__";
-  autoOpt.textContent = "Automatisch (langsamer)";
+  autoOpt.textContent = "Automatisch (Legacy, langsamer)";
   fontSelect.appendChild(autoOpt);
   function crnnSelected() {
-    return FONTS.includes(fontSelect.value) && crnnToggle.checked;
+    return FONTS.includes(fontSelect.value) && !legacyToggle.checked;
   }
   function detailSelected() {
     return crnnSelected() && detailToggle.checked;
@@ -607,10 +607,8 @@ globalThis.__DICT_WORKER_SRC__ = "(() => {\n  // src/generated-dict.js\n  var DI
     return detailSelected() ? PROCESS_DIM_DETAIL : PROCESS_DIM_FAST;
   }
   function updateEngineChoice() {
-    const available = FONTS.includes(fontSelect.value);
-    const crnn = available && crnnToggle.checked;
-    crnnWrap.classList.toggle("hidden", !available);
-    crnnHint.classList.toggle("hidden", !crnn);
+    const crnn = crnnSelected();
+    legacyWrap.classList.toggle("hidden", !FONTS.includes(fontSelect.value));
     detailWrap.classList.toggle("hidden", !crnn);
     detailHint.classList.toggle("hidden", !detailSelected());
   }
@@ -759,13 +757,13 @@ globalThis.__DICT_WORKER_SRC__ = "(() => {\n  // src/generated-dict.js\n  var DI
     const detail = detailSelected();
     const sec = estimateSeconds(px, auto, crnn);
     const big = px > 7e5 || Math.max(dw, dh) >= maxDim;
-    el.textContent = `Ausschnitt \u2192 ${dw}\xD7${dh} px` + (big ? " (gro\xDF \u2014 Rahmen enger = schneller)" : "") + ` \xB7 Sch\xE4tzung ${formatEta(sec)}` + (auto ? " \xB7 Auto pr\xFCft alle Schriften" : crnn ? " \xB7 Schnellmodell" : "") + (detail ? " \xB7 hohe Aufl\xF6sung" : "");
+    el.textContent = `Ausschnitt \u2192 ${dw}\xD7${dh} px` + (big ? " (gro\xDF \u2014 Rahmen enger = schneller)" : "") + ` \xB7 Sch\xE4tzung ${formatEta(sec)}` + (auto ? " \xB7 Auto pr\xFCft alle Schriften" : crnn ? " \xB7 Schnellmodell" : " \xB7 Legacy-Modus") + (detail ? " \xB7 hohe Aufl\xF6sung" : "");
   }
   fontSelect.addEventListener("change", () => {
     updateEngineChoice();
     updateCropEstimate();
   });
-  crnnToggle.addEventListener("change", () => {
+  legacyToggle.addEventListener("change", () => {
     updateEngineChoice();
     updateCropEstimate();
   });
@@ -778,7 +776,8 @@ globalThis.__DICT_WORKER_SRC__ = "(() => {\n  // src/generated-dict.js\n  var DI
     updateCropEstimate();
   });
   try {
-    if (localStorage.getItem(DETAIL_STORAGE_KEY) === "1") detailToggle.checked = true;
+    const saved = localStorage.getItem(DETAIL_STORAGE_KEY);
+    if (saved === "0" || saved === "1") detailToggle.checked = saved === "1";
   } catch {
   }
   updateEngineChoice();
@@ -1080,7 +1079,7 @@ globalThis.__DICT_WORKER_SRC__ = "(() => {\n  // src/generated-dict.js\n  var DI
       return;
     }
     if (res.empty) {
-      textEl.textContent = "Keine Runen erkannt. Ausschnitt enger fassen oder andere Sprache w\xE4hlen.";
+      textEl.textContent = "Keine Runen erkannt. Foto m\xF6glichst gerade aufnehmen (nicht zur Seite gekippt), Runen gro\xDF im Bild, Ausschnitt enger fassen oder andere Sprache w\xE4hlen.";
       showScreen("result");
       return;
     }

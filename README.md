@@ -10,7 +10,9 @@
 2. Rahmen eng um den Runentext ziehen.
 3. Sprache wählen und **Entschlüsseln**.
 
-Standard ist das Schnellmodell (Tiny-CRNN). Optional: **Mehr Details** (höhere Auflösung, langsamer) und ein Wörterbuch, das unsichere Wörter im Hintergrund rät.
+Standard ist das Schnellmodell (Tiny-CRNN) mit **Mehr Details** (höhere Auflösung). Den alten Erkenner gibt es noch als **Legacy-Modus**; „Automatisch“ (Schrift selbst erkennen) läuft nur darüber. Dazu ein Wörterbuch, das unsichere Wörter im Hintergrund rät.
+
+Am besten klappt es, wenn das Blatt gerade fotografiert ist (nicht zur Seite gekippt) und die Runen groß im Bild sind.
 
 Unterstützte Schriften: Runen, Taluz, Gobsch, Lacrimat, Xersesch, Nalya, Nalya-Shirin, Lem-Kai.
 

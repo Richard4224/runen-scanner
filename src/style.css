@@ -116,6 +116,7 @@ button:disabled { opacity: 0.45; cursor: default; }
   font-weight: 600;
   text-align: center;
 }
+#photo-tips { font-size: 0.9rem; }
 #screen-start .hint {
   color: #e3b8ac;
   max-width: 26em;

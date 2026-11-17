@@ -71,9 +71,8 @@ const cropCanvas = $("crop-canvas");
 const cropWrap = $("crop-wrap");
 const cropRectEl = $("crop-rect");
 const fontSelect = $("font-select");
-const crnnWrap = $("crnn-wrap");
-const crnnToggle = $("crnn-toggle");
-const crnnHint = $("crnn-hint");
+const legacyWrap = $("legacy-wrap");
+const legacyToggle = $("legacy-toggle");
 const detailWrap = $("detail-wrap");
 const detailToggle = $("detail-toggle");
 const detailHint = $("detail-hint");
@@ -86,11 +85,13 @@ for (const f of FONTS) {
 }
 const autoOpt = document.createElement("option");
 autoOpt.value = "__auto__";
-autoOpt.textContent = "Automatisch (langsamer)";
+autoOpt.textContent = "Automatisch (Legacy, langsamer)";
 fontSelect.appendChild(autoOpt);
 
+// Standard ist das Schnellmodell (CRNN); der alte Erkenner nur per Legacy-Modus
+// oder bei "Automatisch" (das CRNN braucht eine feste Schrift).
 function crnnSelected() {
-  return FONTS.includes(fontSelect.value) && crnnToggle.checked;
+  return FONTS.includes(fontSelect.value) && !legacyToggle.checked;
 }
 
 function detailSelected() {
@@ -102,10 +103,8 @@ function processDim() {
 }
 
 function updateEngineChoice() {
-  const available = FONTS.includes(fontSelect.value);
-  const crnn = available && crnnToggle.checked;
-  crnnWrap.classList.toggle("hidden", !available);
-  crnnHint.classList.toggle("hidden", !crnn);
+  const crnn = crnnSelected();
+  legacyWrap.classList.toggle("hidden", !FONTS.includes(fontSelect.value));
   detailWrap.classList.toggle("hidden", !crnn);
   detailHint.classList.toggle("hidden", !detailSelected());
 }
@@ -260,14 +259,14 @@ function updateCropEstimate() {
     `Ausschnitt → ${dw}×${dh} px` +
     (big ? " (groß — Rahmen enger = schneller)" : "") +
     ` · Schätzung ${formatEta(sec)}` +
-    (auto ? " · Auto prüft alle Schriften" : crnn ? " · Schnellmodell" : "") +
+    (auto ? " · Auto prüft alle Schriften" : crnn ? " · Schnellmodell" : " · Legacy-Modus") +
     (detail ? " · hohe Auflösung" : "");
 }
 fontSelect.addEventListener("change", () => {
   updateEngineChoice();
   updateCropEstimate();
 });
-crnnToggle.addEventListener("change", () => {
+legacyToggle.addEventListener("change", () => {
   updateEngineChoice();
   updateCropEstimate();
 });
@@ -276,8 +275,10 @@ detailToggle.addEventListener("change", () => {
   updateEngineChoice();
   updateCropEstimate();
 });
+// "Mehr Details" ist Standard; gespeichert wird nur, wer es selbst umgeschaltet hat.
 try {
-  if (localStorage.getItem(DETAIL_STORAGE_KEY) === "1") detailToggle.checked = true;
+  const saved = localStorage.getItem(DETAIL_STORAGE_KEY);
+  if (saved === "0" || saved === "1") detailToggle.checked = saved === "1";
 } catch {}
 updateEngineChoice();
 
@@ -591,7 +592,7 @@ function showResult(res) {
     return;
   }
   if (res.empty) {
-    textEl.textContent = "Keine Runen erkannt. Ausschnitt enger fassen oder andere Sprache wählen.";
+    textEl.textContent = "Keine Runen erkannt. Foto möglichst gerade aufnehmen (nicht zur Seite gekippt), Runen groß im Bild, Ausschnitt enger fassen oder andere Sprache wählen.";
     showScreen("result");
     return;
   }
@@ -600,7 +601,7 @@ function showResult(res) {
   const engine = res.engine === "crnn";
   metaEl.textContent =
     `Sprache: ${fontLabel(res.font)}` +
-    (engine ? "  ·  Schnellmodell" :`  ·  Sicherheit: ${Math.round(res.confidence * 100)}%`) +
+    (engine ? "  ·  Schnellmodell" : `  ·  Sicherheit: ${Math.round(res.confidence * 100)}%`) +
     (res.lines ? `  ·  ${res.lines} Zeilen` : "") + sec;
   dictToggle.checked = res.engine !== "crnn";
   dictToggleWrap.classList.toggle("hidden", res.engine === "crnn");
