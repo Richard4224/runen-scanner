@@ -2,5 +2,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "runen-uebersetzer",
   "compatibility_date": "2026-08-24",
-  "pages_build_output_dir": "./dist-cloudflare"
+  "pages_build_output_dir": "./dist-cloudflare",
+  // Cloudflare Pages nimmt Build-Variablen aus dieser Datei, nicht aus dem Dashboard.
+  // onnxruntime-node braucht keine CUDA-Binaries (nur lokale Benchmarks auf der CPU).
+  "vars": {
+    "ONNXRUNTIME_NODE_INSTALL": "skip"
+  }
 }
