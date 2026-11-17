@@ -27,7 +27,7 @@ try {
   await page.setInputFiles("#file-input", image);
   await page.waitForSelector("#screen-crop.active", { timeout: 15_000 });
   await page.selectOption("#font-select", "Phoenix-Runen");
-  await page.uncheck("#crnn-toggle");
+  await page.check("#legacy-toggle");
   await page.click("#crop-go");
 
   const started = Date.now();

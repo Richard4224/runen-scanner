@@ -71,9 +71,8 @@ const cropCanvas = $("crop-canvas");
 const cropWrap = $("crop-wrap");
 const cropRectEl = $("crop-rect");
 const fontSelect = $("font-select");
-const crnnWrap = $("crnn-wrap");
-const crnnToggle = $("crnn-toggle");
-const crnnHint = $("crnn-hint");
+const legacyWrap = $("legacy-wrap");
+const legacyToggle = $("legacy-toggle");
 const detailWrap = $("detail-wrap");
 const detailToggle = $("detail-toggle");
 const detailHint = $("detail-hint");
@@ -86,11 +85,13 @@ for (const f of FONTS) {
 }
 const autoOpt = document.createElement("option");
 autoOpt.value = "__auto__";
-autoOpt.textContent = "Automatisch (langsamer)";
+autoOpt.textContent = "Automatisch (Legacy, langsamer)";
 fontSelect.appendChild(autoOpt);
 
+// Standard ist das Schnellmodell (CRNN); der alte Erkenner nur per Legacy-Modus
+// oder bei "Automatisch" (das CRNN braucht eine feste Schrift).
 function crnnSelected() {
-  return FONTS.includes(fontSelect.value) && crnnToggle.checked;
+  return FONTS.includes(fontSelect.value) && !legacyToggle.checked;
 }
 
 function detailSelected() {
@@ -102,10 +103,8 @@ function processDim() {
 }
 
 function updateEngineChoice() {
-  const available = FONTS.includes(fontSelect.value);
-  const crnn = available && crnnToggle.checked;
-  crnnWrap.classList.toggle("hidden", !available);
-  crnnHint.classList.toggle("hidden", !crnn);
+  const crnn = crnnSelected();
+  legacyWrap.classList.toggle("hidden", !FONTS.includes(fontSelect.value));
   detailWrap.classList.toggle("hidden", !crnn);
   detailHint.classList.toggle("hidden", !detailSelected());
 }
@@ -227,20 +226,63 @@ cropRectEl.addEventListener("pointerup", endDrag);
 cropRectEl.addEventListener("pointercancel", endDrag);
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
-/** Grobe ETA aus Prozess-Pixeln (iPhone ~ ein Kern). */
 function processSize() {
   const sw = rect.w * dispScale, sh = rect.h * dispScale;
   const maxDim = processDim();
   const scale = Math.min(1, maxDim / Math.max(sw, sh));
   const dw = Math.max(1, Math.round(sw * scale));
   const dh = Math.max(1, Math.round(sh * scale));
-  return { dw, dh, px: dw * dh, maxDim };
+  const heightFrac = sourceImg ? Math.min(1, sh / sourceImg.naturalHeight) : 1;
+  return { dw, dh, px: dw * dh, maxDim, heightFrac };
 }
-function estimateSeconds(px, auto, crnn = false) {
-  if (crnn) return Math.max(5, Math.round(4 + px / 180_000));
-  // Empirisch: ~1,2e5 Px/s auf einem Kern mit 5+5 Skalen; Auto × Schriftanzahl.
+
+// Zeitschaetzung. Gemessen (Nov 2026, WebKit, 1 Thread, 8 echte Fotos), Schnellmodell:
+// ~0,4 s fest (Uebergabe, Anzeige) + ~0,1 s pro Megapixel (Vorbereitung, Zeilensuche)
+// + ~0,05 s pro Zeile. Die Zeilenzahl kennt erst die Zeilensuche; vorher wird sie aus
+// der Ausschnitthoehe geraten (ganzes Blatt ~40 Zeilen, 9 pt eher mehr, 15 pt weniger).
+// Das Tempo pro Zeile wird nach jedem Scan nachgezogen (Handy vs. PC, 1 vs. 4 Threads).
+const CRNN_FIXED_S = 0.4;
+const CRNN_MP_S = 0.1;
+const CRNN_LINE_S = 0.05;
+const CRNN_MODEL_S = 0.5;          // Modell laden, einmal pro Schrift und Worker
+const RESULT_TAIL_S = 0.3;         // nach der letzten Zeile: Ergebnis uebergeben und anzeigen
+const LINES_PER_PAGE = 40;
+const LEGACY_FACTOR = 60;          // Erfahrungswert: alter Erkenner ~60x langsamer
+let deviceFactor = 1;
+let deviceCalibrated = false;
+const warmFonts = new Set();       // Schriften, deren Modell im Worker schon geladen ist
+
+function crnnSeconds(lines, px) {
+  return CRNN_FIXED_S + (px / 1e6) * CRNN_MP_S + lines * CRNN_LINE_S;
+}
+function secondsPerLine(engine) {
+  return CRNN_LINE_S * deviceFactor * (engine === "crnn" ? 1 : LEGACY_FACTOR);
+}
+function estimateSeconds({ px, heightFrac, auto, crnn, font }) {
+  const lines = Math.max(1, Math.round(LINES_PER_PAGE * heightFrac));
+  if (crnn) {
+    const model = warmFonts.has(font) ? 0 : CRNN_MODEL_S;
+    return Math.max(1, Math.round(deviceFactor * (crnnSeconds(lines, px) + model)));
+  }
   const fonts = auto ? FONTS.length : 1;
-  return Math.max(3, Math.round((px / 1.2e5) * fonts));
+  return Math.max(1, Math.round(deviceFactor * crnnSeconds(lines, px) * LEGACY_FACTOR * fonts));
+}
+
+/** Merkt sich nach einem Schnellmodell-Scan das echte Tempo pro Zeile. */
+function calibrate(res) {
+  if (!res || !res.ok || res.engine !== "crnn") return;
+  warmFonts.add(loadMeta.font);
+  // Erst ab einigen Zeilen aussagekraeftig; kleine Ausschnitte verzerren sonst.
+  if (!loadMeta.tFirstLine || loadMeta.linesSeen < 5) return;
+  const perLine = (performance.now() - loadMeta.tFirstLine) / 1000 / loadMeta.linesSeen;
+  const f = Math.min(20, Math.max(0.3, perLine / CRNN_LINE_S));
+  deviceFactor = deviceCalibrated ? (deviceFactor + f) / 2 : f;
+  deviceCalibrated = true;
+}
+/** Gesamtdauer = schon vergangen + geschaetzter Rest (nie kleiner als vergangen). */
+function projectEta(remainingSec) {
+  const elapsed = (Date.now() - startedAt) / 1000;
+  return Math.max(Math.ceil(elapsed), Math.round(elapsed + remainingSec));
 }
 function formatEta(sec) {
   if (sec < 60) return `ca. ${sec} s`;
@@ -250,24 +292,25 @@ function formatEta(sec) {
 function updateCropEstimate() {
   const el = $("crop-estimate");
   if (!sourceImg || !el) return;
-  const { dw, dh, px, maxDim } = processSize();
+  const { dw, dh, px, maxDim, heightFrac } = processSize();
   const auto = fontSelect.value === "__auto__";
   const crnn = crnnSelected();
   const detail = detailSelected();
-  const sec = estimateSeconds(px, auto, crnn);
-  const big = px > 700_000 || Math.max(dw, dh) >= maxDim;
+  const sec = estimateSeconds({ px, heightFrac, auto, crnn, font: fontSelect.value });
+  // Beim Schnellmodell kostet die Groesse kaum Zeit, nur beim alten Erkenner.
+  const big = !crnn && (px > 700_000 || Math.max(dw, dh) >= maxDim);
   el.textContent =
     `Ausschnitt → ${dw}×${dh} px` +
     (big ? " (groß — Rahmen enger = schneller)" : "") +
     ` · Schätzung ${formatEta(sec)}` +
-    (auto ? " · Auto prüft alle Schriften" : crnn ? " · Schnellmodell" : "") +
+    (auto ? " · Auto prüft alle Schriften" : crnn ? " · Schnellmodell" : " · Legacy-Modus") +
     (detail ? " · hohe Auflösung" : "");
 }
 fontSelect.addEventListener("change", () => {
   updateEngineChoice();
   updateCropEstimate();
 });
-crnnToggle.addEventListener("change", () => {
+legacyToggle.addEventListener("change", () => {
   updateEngineChoice();
   updateCropEstimate();
 });
@@ -276,8 +319,10 @@ detailToggle.addEventListener("change", () => {
   updateEngineChoice();
   updateCropEstimate();
 });
+// "Mehr Details" ist Standard; gespeichert wird nur, wer es selbst umgeschaltet hat.
 try {
-  if (localStorage.getItem(DETAIL_STORAGE_KEY) === "1") detailToggle.checked = true;
+  const saved = localStorage.getItem(DETAIL_STORAGE_KEY);
+  if (saved === "0" || saved === "1") detailToggle.checked = saved === "1";
 } catch {}
 updateEngineChoice();
 
@@ -332,7 +377,8 @@ function startDecode() {
   const auto = chosen === "__auto__";
   const engine = crnnSelected() ? "crnn" : "classic";
   const detail = engine === "crnn" && detailToggle.checked;
-  const eta = estimateSeconds(dw * dh, auto, engine === "crnn");
+  const heightFrac = Math.min(1, sh / sourceImg.naturalHeight);
+  const eta = estimateSeconds({ px: dw * dh, heightFrac, auto, crnn: engine === "crnn", font: chosen });
 
   showScreen("loading");
   startLoadingAnim({ dw, dh, eta, auto, font: auto ? null : chosen, engine, detail });
@@ -351,7 +397,7 @@ let loadingTimer = null, elapsedTimer = null, startedAt = 0, watchdogTimer = nul
 let loadMeta = { eta: 0, dw: 0, dh: 0, auto: false, detail: false };
 
 function startLoadingAnim({ dw, dh, eta, auto, font, engine, detail = false }) {
-  loadMeta = { eta, dw, dh, auto, font, engine, detail };
+  loadMeta = { eta, dw, dh, auto, font, engine, detail, tFirstLine: 0, linesSeen: 0 };
   let i = 0;
   $("loading-text").textContent = FLAVOR[0];
   $("loading-detail").textContent =
@@ -396,17 +442,23 @@ function onWorkerProgress(msg) {
   } else if (msg.phase === "prepare") {
     detail.textContent = `Bild ${msg.w}×${msg.h} wird vorbereitet …`;
   } else if (msg.phase === "lines") {
-    const eta = Math.max(3, Math.round((msg.total || 1) * (loadMeta.auto ? FONTS.length * 1.2 : 1.2)));
-    loadMeta.eta = eta;
-    detail.textContent = `${msg.total} Zeilen erkannt · neu ${formatEta(eta)}`;
+    const fontsLeft = msg.fontTotal ? (msg.fontTotal - (msg.fontI || 1) + 1) : 1;
+    loadMeta.eta = projectEta((msg.total || 1) * fontsLeft * secondsPerLine(loadMeta.engine) + RESULT_TAIL_S);
+    detail.textContent = `${msg.total} Zeilen erkannt · neu ${formatEta(loadMeta.eta)}`;
   } else if (msg.phase === "line") {
     const fontBit = msg.font ? ` · ${fontLabel(msg.font)}` : "";
     detail.textContent = `Zeile ${msg.i} von ${msg.total}${fontBit}`;
+    // Tempo pro Zeile live messen, sobald mindestens eine Zeile fertig ist.
+    const now = performance.now();
+    if (!loadMeta.tFirstLine) loadMeta.tFirstLine = now;
+    loadMeta.linesSeen++;
     if (msg.total) {
-      const per = loadMeta.auto ? 1.2 : 1.2;
+      const per = loadMeta.linesSeen > 1
+        ? (now - loadMeta.tFirstLine) / 1000 / (loadMeta.linesSeen - 1)
+        : secondsPerLine(loadMeta.engine);
       const fontsLeft = msg.fontTotal ? (msg.fontTotal - (msg.fontI || 1) + 1) : 1;
-      const linesLeft = Math.max(0, (msg.total - msg.i) + (fontsLeft - 1) * msg.total);
-      loadMeta.eta = Math.max(2, Math.round(linesLeft * per));
+      const linesLeft = Math.max(0, (msg.total - msg.i + 1) + (fontsLeft - 1) * msg.total);
+      loadMeta.eta = projectEta(linesLeft * per + RESULT_TAIL_S);
     }
   } else if (msg.phase === "font") {
     detail.textContent = `Schrift ${msg.i}/${msg.total}: ${fontLabel(msg.font)}`;
@@ -430,6 +482,7 @@ function makeWorker() { return makeBlobWorker(globalThis.__WORKER_SRC__); }
 function stopWorker() {
   stopLoadingAnim();
   if (worker) { worker.terminate(); worker = null; }
+  warmFonts.clear();
 }
 function runWorker(payload, transfer) {
   // Worker wiederverwenden: Das Schnellmodell muss dann nur einmal kompiliert werden.
@@ -440,6 +493,7 @@ function runWorker(payload, transfer) {
       onWorkerProgress(data);
       return;
     }
+    calibrate(data);
     stopLoadingAnim();
     showResult(data);
   };
@@ -591,7 +645,7 @@ function showResult(res) {
     return;
   }
   if (res.empty) {
-    textEl.textContent = "Keine Runen erkannt. Ausschnitt enger fassen oder andere Sprache wählen.";
+    textEl.textContent = "Keine Runen erkannt. Foto möglichst gerade aufnehmen (nicht zur Seite gekippt), Runen groß im Bild, Ausschnitt enger fassen oder andere Sprache wählen.";
     showScreen("result");
     return;
   }
@@ -600,7 +654,7 @@ function showResult(res) {
   const engine = res.engine === "crnn";
   metaEl.textContent =
     `Sprache: ${fontLabel(res.font)}` +
-    (engine ? "  ·  Schnellmodell" :`  ·  Sicherheit: ${Math.round(res.confidence * 100)}%`) +
+    (engine ? "  ·  Schnellmodell" : `  ·  Sicherheit: ${Math.round(res.confidence * 100)}%`) +
     (res.lines ? `  ·  ${res.lines} Zeilen` : "") + sec;
   dictToggle.checked = res.engine !== "crnn";
   dictToggleWrap.classList.toggle("hidden", res.engine === "crnn");
